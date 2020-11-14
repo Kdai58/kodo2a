@@ -1,0 +1,236 @@
+' @file   class_diagram.pu
+' @auther Group 2d, AL18036 Kataoka Nagi
+' @note   クラス図出力用のファイル
+' @see    https://qiita.com/opengl-8080/items/98c510b8ca060bdd2ea3
+
+@startuml
+scale 1.5
+skinparam DefaultFontName メイリオ
+' 可視性の変更
+skinparam classAttributeIconSize 0
+
+header 
+Group 2d : al18036 Kataoka Nagi
+Version 1.0 (prepairing for 2nd lecture)
+end header
+
+title
+**Class Diagram**
++ public
+~- private
+end title
+' __static__
+
+' class def
+' @see https://qiita.com/KeithYokoma/items/ee21fec6a3ebb5d1e9a8
+
+class RoomEntropyChecker {
+  - SLEEP_SEC: Integer = 5000
+
+  ' - new_instance(): void
+  - loop_gui(): void
+  ' - post_processing(): void
+}
+note left
+  --Folder Tree--
+  kodo2a
+  |_ src
+    |_ room_entropy_checker.py
+    |_ gui_manager.py
+    |_ img_exception.py
+    |_ camera_img_extractor.py
+    |_ absolute_entropy_analyser.py
+    |_ relative_entropy_analyser.py
+    |_ post_processing.py
+    |_ Makefile
+  |_ dist
+    |_ previous_entropies.txt
+end note
+
+RoomEntropyChecker ..> GUIManager
+
+
+' class CleanMovie {
+'   - should_clean_data: bool
+
+'   - is_same_camera_pos(): void
+'   + clean_movie_if_needed(): void
+' }
+' note left
+' Implement if possible
+' end note
+
+class GUIManager {
+  - PRAISE_STR: string = "How beautiful your room is!!"
+  - NORMAL_STR: string = "Endeavor putting your room in order."
+  - WARN_STR: string = "How dirty yor room is...."
+  - img: int[][]
+  - binary_img: int[][]
+
+  + init_gui(): void
+  + update_gui(): void
+  - print_exception(): void
+  - print_absolute_entropy(): void
+  - print_relative_entropy(): void
+  - is_too_big_entropy(entropy: float): bool
+  - print_img(img: int[][]): void
+  + destroy_gui(): void
+}
+note left
+Implement print_exception
+if possible
+end note
+
+GUIManager ..> ImgException
+GUIManager ..> AbsoluteEntropyAnalyser
+GUIManager ..> RelativeEntropiyAnalyser
+GUIManager ..> CameraImgExtractor
+GUIManager ..> PostProcessing
+
+class ImgException {
+  ' + exists_any_exception(): void
+  ' - exists_webcam(extractor: CametaImgExtractor): bool
+  - exists_creature(img: int[][]): bool
+  - is_dark_room(img: int[][]): bool
+}
+note left
+Implement
+if possible
+end note
+
+class CameraImgExtractor {
+  - open_webcam_stream(): void
+  + exists_webcam(): bool
+  + read_img(): int[][]
+  + calc_binary_img(): int[][]
+  + release_webcam_stream(): void
+}
+note left
+open_webcam_stem()
+is in constractor
+end note
+
+class AbsoluteEntropyAnalyser {
+  ' - AbsoluteEntropy: float = 0.0f
+
+  + calc_absolute_entropy(img: int[][]): void
+  ' + get_absolute_entropy(): float
+}
+
+class RelativeEntropiyAnalyser {
+  - previous_entropies: float[]
+  - relative_entropy: float
+
+  - new_entropies_log_if_needed(): void
+  - load_previous_entropies(): void
+  + calc_relative_entropy(img: int[][], absolute_entropy: float): float
+  - update_previous_entropies(): void
+  + close_log_file(): void
+}
+
+' @see http://labs.eecs.tottori-u.ac.jp/sd/Member/oyamada/OpenCV/html/py_tutorials/py_gui/py_video_display/py_video_display.html
+class PostProcessing {
+  ' + post_processing_if_needed(): void
+  + release_webcam_stream(extractor: CameraImgExtractor): void
+  + close_log_file(analyser: RelativeEntropiyAnalyser): void
+  + destroy_gui(manager: GUIManager): void
+}
+
+PostProcessing ..> CameraImgExtractor
+PostProcessing ..> RelativeEntropiyAnalyser
+PostProcessing ..> GUIManager
+
+' ********** PlantUML Tutorial **********
+
+' note left
+
+'   --木構造--
+'   |_build.gradle
+'   |_src
+'     |_main
+'       |_java
+'         |_**bold**
+'         |_--strike--
+'         |_//itaric//
+'         |___underline__
+'         |_""monospace""
+'     |_test
+
+' end note
+
+' class Hello　<<StereoType>> {
+'     {abstract} one: String
+'     {static} three(param1: String, param2: int): boolean
+'     String two
+'     int four(List<String> param)
+' }
+' class World <Template>{
+'     - privateField: int
+'     # protectedField: int
+'     ~ packagePrivateField: int
+'     + publicField: int
+
+'     - privateMethod(): void
+'     # protectedMethod(): void
+'     ~ packagePrivateMethod(): void
+'     + publicMethod(): void
+' }
+' note left : note
+' note top of Hello: note
+
+' interface hoge
+' abstruct class hoge
+' enum HelloWorld {
+'     ONE
+'     TWO
+'     THREE
+' }
+
+' interface One
+' interface Two
+' interface Three extends Two
+' interface Four
+' class Five implements One, Three
+' class Six extends Five implements Four {
+'     field: String
+'     method(): void
+' }
+
+' Hello -- World
+' One --> Two
+' Three <-- Four
+' Five <--> Six
+' Seven x-- Eight
+' Nine --x Ten
+' One ..> Two
+' Three <.. Four
+' One --|> Two
+' Three <|-- Four
+' One ..|> Two
+' Three <|.. Four
+' One --o Two
+' Three o-- Four
+' One --* Two
+' Three *-- Four
+' One -- Two : Hoge
+' Three -- Four : Fuga >
+' Five -- Six : < Piyo
+' One "Foo" -- Two 
+' Three -- "Bar" Four
+' Five "1" -- "1..*" Six
+' Seven "1 Fizz" -- "~* Buzz" Eight
+
+' package one.two {
+'     class Hello
+' }
+' package three.four {
+'     World -- Hello
+' }
+
+' Hello -- World
+' note on link
+' hoge
+' fuga
+' end note
+
+@enduml
