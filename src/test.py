@@ -6,8 +6,8 @@ class TestGuiManager(unittest.TestCase):
 	"""test class of gui_manager.py
 	"""
 
-	def test_update_gui(self):
-		"""test method for update_gui
+	def test_print_exception(self):
+		"""test method for __print_exception
 		"""
 		root = tkinter.Tk()
 		sut = GuiManager(master=root)
@@ -30,6 +30,6 @@ class TestGuiManager(unittest.TestCase):
 		# 全てのテストケースでテスト
 		for value, expected_result in zip(values, expected_results):
 			with self.subTest(value=value):
-				sut.update_gui(value)
+				sut._print_exception(value)
 				actual_result = sut.alert_text.get()
 				self.assertEqual(actual_result, expected_result)
