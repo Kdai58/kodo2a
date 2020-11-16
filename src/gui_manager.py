@@ -1,4 +1,15 @@
 # -*- coding: utf-8 -*-
+
+"""
+
+作成者：兼平大輔
+日付：2020.11.16
+バージョン：2.0
+変更内容：画像描画処理を追加．
+
+"""
+
+import numpy as np
 import cv2
 import tkinter
 import threading
@@ -16,16 +27,14 @@ class GuiManager(tkinter.Frame):
 		self.NORMAL_STR = 'Endeavor putting your room in order'
 		self.WARN_STR = 'How dirty your room is'
 
+		self.__img_array = np.zeros((600, 300))
+
 		master.geometry('600x400')
 
 		# フレームの初期化
 		self.master = master
 		self.master.title('Room entropy checker')
 		self.pack()
-
-		# MainPanel を 全体に配置
-		self.mainpanel = tkinter.Label(root)
-		self.mainpanel.pack(expand=1)
 
 		# ボタンの設定
 		self.destroy_btn = tkinter.Button(master, text='stop', command=self.destroy_gui)
@@ -41,11 +50,11 @@ class GuiManager(tkinter.Frame):
 
 		self.alert_text_label.pack(side='bottom', expand=1)
 
-		# webカメラの映像の描画が開始されたかを表すフラグ
-		self.is_capture_started = False
-
-		# webカメラの映像の描画を開始
-		self.start_cap()
+		# 画像の描画
+		self.img = ImageTk.PhotoImage(image=Image.fromarray(self.__img_array))
+		self.canvas = tkinter.Canvas(self.master, width=600, height=300)
+		self.canvas.place(x=100, y=40)
+		self.item = self.canvas.create_image(30, 30, image=self.img, anchor=tkinter.NW)
 
     # 監視処理を別スレッドで実行する
 	def monitor_callback(self):
@@ -57,15 +66,19 @@ class GuiManager(tkinter.Frame):
 		i = 0
 
 		# ここに部屋の監視の処理を書く．
-		# 今はとりあえず3秒毎にアラートメッセージを更新する処理が書いてある．
+		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
 		while (1):
 			time.sleep(3)
-			self.update_gui(i % 3)
+			self.update_gui(i % 3, self.__img_array)
+			self.__img_array[i % 600] = np.full(300, 255)
+			print(self.__img_array[i % 600])
 			print(i)
 			i += 1
 
     # room_entropyの値に応じてアラートメッセージを更新する
-	def update_gui(self, room_entropy):
+	def update_gui(self, room_entropy, __img_array):
+		self.__print_img(__img_array)
+
 		if room_entropy == 0:
 			self.alert_text_label.config(fg='green')
 			self.alert_text.set(self.PRAISE_STR)
@@ -76,32 +89,12 @@ class GuiManager(tkinter.Frame):
 			self.alert_text_label.config(fg='red')
 			self.alert_text.set(self.WARN_STR)
 
+	def __print_img(self, __img_array):
+		self.img = ImageTk.PhotoImage(image=Image.fromarray(__img_array))
+		self.canvas.itemconfig(self.item, image=self.img)
 
 	def destroy_gui(self):
-		self.stop_cap()
 		self.master.destroy()
-
-	def start_cap(self):
-		if not self.is_capture_started:
-			self.is_capture_started = True
-			self.cap = cv2.VideoCapture(WEB_CAMERA_NUMBER)
-			self.after_id = self.after(33, self.update_cap)
-
-	def update_cap(self):
-		ret, frame = self.cap.read()
-		if ret:
-			frame = cv2.resize(frame, (600, 300), interpolation=cv2.INTER_LANCZOS4)
-			imgtk = ImageTk.PhotoImage(image=Image.fromarray(frame))
-			self.mainpanel.imgtk = imgtk
-			self.mainpanel.configure(image=imgtk)
-		
-		self.after_id = self.after(33, self.update_cap)
-
-	def stop_cap(self):
-		self.after_cancel(self.after_id)
-		self.cap.release()
-		cv2.destroyAllWindows()
-		self.is_capture_started = False
 
 
 if __name__ == "__main__":
