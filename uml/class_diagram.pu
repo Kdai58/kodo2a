@@ -1,7 +1,8 @@
 ' @file   class_diagram.pu
 ' @auther Group 2d, AL18036 Kataoka Nagi
 ' @note   クラス図出力用のファイル
-' @note   java -jar plantuml.jar -graphvizdot C:\Graphviz\bin\dot.exe
+' @note   
+' @note   java -jar plantuml.jar -graphvizdot C:\Graphviz\bin\dot.exe .\class_diagram.pu
 ' @see    https://qiita.com/opengl-8080/items/98c510b8ca060bdd2ea3
 
 @startuml
