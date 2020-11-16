@@ -50,6 +50,7 @@ class GuiManager(tkinter.Frame):
     # 監視処理を別スレッドで実行する
 	def monitor_callback(self):
 		thread = threading.Thread(target=self.monitor, args=())
+		thread.setDaemon(True)
 		thread.start()
 
 	def monitor(self):
