@@ -28,6 +28,7 @@ class GuiManager(tkinter.Frame):
 		self.WARN_STR = 'How dirty your room is'
 
 		self.__img_array = np.zeros((600, 300))
+		self.__img
 
 		master.geometry('600x400')
 
@@ -51,12 +52,12 @@ class GuiManager(tkinter.Frame):
 
 		# 絶対エントロピー
 		self.absolute_entropy_text = tkinter.StringVar()
-		self.absolute_entropy_text.set('0')
+		self.absolute_entropy_text.set('absolute entropy = ' + '0')
 		self.absolute_entropy_text_label = tkinter.Label(self.master, textvariable=self.absolute_entropy_text)
 
 		# 相対エントロピー
 		self.relative_entropy_text = tkinter.StringVar()
-		self.relative_entropy_text.set('0')
+		self.relative_entropy_text.set('relative entropy = ' + '0')
 		self.relative_entropy_text_label = tkinter.Label(self.master, textvariable=self.relative_entropy_text)
 
 
@@ -124,11 +125,11 @@ class GuiManager(tkinter.Frame):
 
 	# 絶対エントロピーを表示
 	def __reprint_absolute_entropy(self, absolute_entropy):
-		self.absolute_entropy_text.set(str(absolute_entropy))
+		self.absolute_entropy_text.set('absolute entropy = ' + str(absolute_entropy))
 
 	# 相対エントロピーを表示
 	def __reprint_relative_entropy(self, relative_entropy):
-		self.relative_entropy_text.set(str(relative_entropy))
+		self.relative_entropy_text.set('relative entropy = ' + str(relative_entropy))
 
 	# 乱雑度のレベルを求める
 	def __to_entropy_level(self, relative_entropy):
