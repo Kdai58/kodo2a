@@ -4,8 +4,8 @@
 
 作成者：兼平大輔
 日付：2020.11.16
-バージョン：2.0
-変更内容：画像描画処理を追加．
+バージョン：3.0
+変更内容：絶対エントロピー，相対エントロピーを描画する処理を追加．
 
 """
 
@@ -44,11 +44,25 @@ class GuiManager(tkinter.Frame):
 		self.start_btn.pack(side='bottom')
 
 		# テキストの設定
+		# アラートメッセージ
 		self.alert_text = tkinter.StringVar()
 		self.alert_text.set(self.NORMAL_STR)
 		self.alert_text_label = tkinter.Label(master, textvariable=self.alert_text)
 
+		# 絶対エントロピー
+		self.absolute_entropy_text = tkinter.StringVar()
+		self.absolute_entropy_text.set('0')
+		self.absolute_entropy_text_label = tkinter.Label(self.master, textvariable=self.absolute_entropy_text)
+
+		# 相対エントロピー
+		self.relative_entropy_text = tkinter.StringVar()
+		self.relative_entropy_text.set('0')
+		self.relative_entropy_text_label = tkinter.Label(self.master, textvariable=self.relative_entropy_text)
+
+
 		self.alert_text_label.pack(side='bottom', expand=1)
+		self.absolute_entropy_text_label.pack(side='left', expand=1)
+		self.relative_entropy_text_label.pack(side='left', expand=1)
 
 		# 画像の描画
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(self.__img_array))
@@ -69,29 +83,61 @@ class GuiManager(tkinter.Frame):
 		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
 		while (1):
 			time.sleep(3)
-			self.update_gui(i % 3, self.__img_array)
+			absolute_entropy = i % 3
+			relative_entropy = i % 3
+			entropy_level = self.__to_entropy_level(relative_entropy)
+			self.update_gui(entropy_level=entropy_level, 
+				absolute_entropy=absolute_entropy, 
+				relative_entropy=relative_entropy, 
+				img_array=self.__img_array)
 			self.__img_array[i % 600] = np.full(300, 255)
 			print(self.__img_array[i % 600])
 			print(i)
 			i += 1
 
     # room_entropyの値に応じてアラートメッセージを更新する
-	def update_gui(self, room_entropy, __img_array):
-		self.__print_img(__img_array)
+	def update_gui(self, entropy_level, absolute_entropy, relative_entropy, img_array):
+		self.__print_img(img_array)
 
-		if room_entropy == 0:
+		self.__print_exception(entropy_level)
+
+		self.__reprint_absolute_entropy(absolute_entropy)
+
+		self.__reprint_relative_entropy(relative_entropy)
+
+	# 画像の描画
+	def __print_img(self, __img_array):
+		self.img = ImageTk.PhotoImage(image=Image.fromarray(__img_array))
+		self.canvas.itemconfig(self.item, image=self.img)
+
+	# アラートの表示
+	def __print_exception(self, entropy_level):
+		if entropy_level == 0:
 			self.alert_text_label.config(fg='green')
 			self.alert_text.set(self.PRAISE_STR)
-		elif room_entropy == 1:
+		elif entropy_level == 1:
 			self.alert_text_label.config(fg='black')
 			self.alert_text.set(self.NORMAL_STR)
 		else:
 			self.alert_text_label.config(fg='red')
 			self.alert_text.set(self.WARN_STR)
 
-	def __print_img(self, __img_array):
-		self.img = ImageTk.PhotoImage(image=Image.fromarray(__img_array))
-		self.canvas.itemconfig(self.item, image=self.img)
+	# 絶対エントロピーを表示
+	def __reprint_absolute_entropy(self, absolute_entropy):
+		self.absolute_entropy_text.set(str(absolute_entropy))
+
+	# 相対エントロピーを表示
+	def __reprint_relative_entropy(self, relative_entropy):
+		self.relative_entropy_text.set(str(relative_entropy))
+
+	# 乱雑度のレベルを求める
+	def __to_entropy_level(self, relative_entropy):
+		if relative_entropy == 0:
+			return 0
+		elif relative_entropy == 1:
+			return 1
+		else:
+			return 2
 
 	def destroy_gui(self):
 		self.master.destroy()
