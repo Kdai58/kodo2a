@@ -1,6 +1,7 @@
 ' @file   class_diagram.pu
 ' @auther Group 2d, AL18036 Kataoka Nagi
 ' @note   クラス図出力用のファイル
+' @note   java -jar plantuml.jar -graphvizdot C:\Graphviz\bin\dot.exe
 ' @see    https://qiita.com/opengl-8080/items/98c510b8ca060bdd2ea3
 
 @startuml
@@ -11,7 +12,8 @@ skinparam classAttributeIconSize 0
 
 header 
 Group 2d : al18036 Kataoka Nagi
-Version 1.0 (prepairing for 2nd lecture)
+2020-11-16 Version 1.1
+Edit: GUIManagerの変数名と順序, calc_absolute_entropy()の返り値
 end header
 
 title
@@ -69,11 +71,11 @@ class GUIManager {
 
   + init_gui(): void
   + update_gui(): void
-  - print_exception(): void
-  - print_absolute_entropy(): void
-  - print_relative_entropy(): void
-  - is_too_big_entropy(entropy: float): bool
   - print_img(img: int[][]): void
+  - print_exception(): void
+  - reprint_absolute_entropy(): void
+  - reprint_relative_entropy(): void
+  - to_entropy_level(relative_entropy: float): int
   + destroy_gui(): void
 }
 note left
@@ -113,7 +115,7 @@ end note
 class AbsoluteEntropyAnalyser {
   ' - AbsoluteEntropy: float = 0.0f
 
-  + calc_absolute_entropy(img: int[][]): void
+  + calc_absolute_entropy(img: int[][]): float
   ' + get_absolute_entropy(): float
 }
 
