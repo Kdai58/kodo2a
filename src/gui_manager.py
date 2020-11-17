@@ -4,8 +4,8 @@
 
 作成者：兼平大輔
 日付：2020.11.16
-バージョン：3.0
-変更内容：絶対エントロピー，相対エントロピーを描画する処理を追加．
+バージョン：4.0
+変更内容：テキストを画像の上に表示するようにした．
 
 """
 
@@ -27,7 +27,7 @@ class GuiManager(tkinter.Frame):
 
 		# 画像のピクセルを格納するndarray
 		# 画像のサイズはとりあえず600x300にしてある
-		self._img_array = np.zeros((600, 300))
+		self._img_array = np.full((600, 300), 255, dtype=float)
 		self._binary_img = np.zeros((600, 300))
 
 		master.geometry('600x400')
@@ -44,32 +44,21 @@ class GuiManager(tkinter.Frame):
 		self.destroy_btn.pack(side='bottom')
 		self.start_btn.pack(side='bottom')
 
-		# テキストの設定
-		# アラートメッセージ
-		self.alert_text = tkinter.StringVar()
-		self.alert_text.set(self.NORMAL_STR)
-		self.alert_text_label = tkinter.Label(master, textvariable=self.alert_text)
-
-		# 絶対エントロピー
-		self.absolute_entropy_text = tkinter.StringVar()
-		self.absolute_entropy_text.set('absolute entropy = ' + '0')
-		self.absolute_entropy_text_label = tkinter.Label(self.master, textvariable=self.absolute_entropy_text)
-
-		# 相対エントロピー
-		self.relative_entropy_text = tkinter.StringVar()
-		self.relative_entropy_text.set('relative entropy = ' + '0')
-		self.relative_entropy_text_label = tkinter.Label(self.master, textvariable=self.relative_entropy_text)
-
-
-		self.alert_text_label.pack(side='top', expand=1)
-		self.absolute_entropy_text_label.pack(side='left', expand=1)
-		self.relative_entropy_text_label.pack(side='left', expand=1)
-
 		# 画像の描画
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(self._img_array))
 		self.canvas = tkinter.Canvas(self.master, width=600, height=300)
 		self.canvas.place(x=0, y=0)
-		self.item = self.canvas.create_image(0, 0, image=self.img, anchor=tkinter.NW)
+		self.img_item = self.canvas.create_image(0, 0, image=self.img, anchor=tkinter.NW)
+
+		# テキストの設定
+		# アラートメッセージ
+		self.alert_text_item = self.canvas.create_text(10, 0, text=self.NORMAL_STR, anchor=tkinter.NW)
+
+		# 絶対エントロピー
+		self.absolute_entropy_text_item = self.canvas.create_text(10, 20, text="absolute entropy = " + '0', anchor=tkinter.NW)
+
+		# 相対エントロピー
+		self.relative_entropy_text_item = self.canvas.create_text(10, 40, text="relative entropy = " + '0', anchor=tkinter.NW)
 
     # 監視処理を別スレッドで実行する
 	def monitor_callback(self):
@@ -91,7 +80,7 @@ class GuiManager(tkinter.Frame):
 				absolute_entropy=absolute_entropy, 
 				relative_entropy=relative_entropy, 
 				img_array=self._img_array)
-			self._img_array[i % 600] = np.full(300, 255)
+			self._img_array[i % 600] = np.full(300, 0)
 			print(self._img_array[i % 600])
 			print(i)
 			i += 1
@@ -109,27 +98,24 @@ class GuiManager(tkinter.Frame):
 	# 画像の描画
 	def _print_img(self, img_array):
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(img_array))
-		self.canvas.itemconfig(self.item, image=self.img)
+		self.canvas.itemconfig(self.img_item, image=self.img)
 
 	# アラートの表示
 	def _print_exception(self, entropy_level):
 		if entropy_level == 0:
-			self.alert_text_label.config(fg='green')
-			self.alert_text.set(self.PRAISE_STR)
+			self.canvas.itemconfig(self.alert_text_item, text=self.PRAISE_STR, fill='green')
 		elif entropy_level == 1:
-			self.alert_text_label.config(fg='black')
-			self.alert_text.set(self.NORMAL_STR)
+			self.canvas.itemconfig(self.alert_text_item, text=self.NORMAL_STR, fill='black')
 		else:
-			self.alert_text_label.config(fg='red')
-			self.alert_text.set(self.WARN_STR)
+			self.canvas.itemconfig(self.alert_text_item, text=self.WARN_STR, fill='red')
 
 	# 絶対エントロピーを表示
 	def _reprint_absolute_entropy(self, absolute_entropy):
-		self.absolute_entropy_text.set('absolute entropy = ' + str(absolute_entropy))
+		self.canvas.itemconfig(self.absolute_entropy_text_item, text='absolute entropy = ' + str(absolute_entropy))
 
 	# 相対エントロピーを表示
 	def _reprint_relative_entropy(self, relative_entropy):
-		self.relative_entropy_text.set('relative entropy = ' + str(relative_entropy))
+		self.canvas.itemconfig(self.relative_entropy_text_item, text='relative entropy = ' + str(relative_entropy))
 
 	# 乱雑度のレベルを求める
 	def _to_entropy_level(self, relative_entropy):
