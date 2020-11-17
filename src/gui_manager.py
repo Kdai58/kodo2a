@@ -3,7 +3,7 @@
 """
 
 作成者：兼平大輔
-日付：2020.11.16
+日付：2020.11.18
 バージョン：4.0
 変更内容：テキストを画像の上に表示するようにした．
 
@@ -118,6 +118,7 @@ class GuiManager(tkinter.Frame):
 		self.canvas.itemconfig(self.relative_entropy_text_item, text='relative entropy = ' + str(relative_entropy))
 
 	# 乱雑度のレベルを求める
+	# とりあえずrelative_entropyが0, 1, 2であると仮定して，relative_entropyの値を返すようにしている．
 	def _to_entropy_level(self, relative_entropy):
 		if relative_entropy == 0:
 			return 0
