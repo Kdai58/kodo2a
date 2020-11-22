@@ -16,7 +16,7 @@ import threading
 import random
 import time
 from PIL import Image, ImageTk
-from relative_entropy_analyser import RelativeEntropyAnalyser
+#from relative_entropy_analyser import RelativeEntropyAnalyser
 
 class GuiManager(tkinter.Frame):
 	def __init__(self, master=None):
