@@ -21,16 +21,19 @@ class GuiManager(tkinter.Frame):
 	def __init__(self, master=None):
 		super().__init__(master)
 
+		# 画像のサイズ（とりあえず600x300にしてある）
+		self._IMG_WIDTH = 600
+		self._IMG_HEIGHT = 300
+
 		self.PRAISE_STR = 'How beautiful your room is'
 		self.NORMAL_STR = 'Endeavor putting your room in order'
 		self.WARN_STR = 'How dirty your room is'
 
 		# 画像のピクセルを格納するndarray
-		# 画像のサイズはとりあえず600x300にしてある
-		self._img_array = np.full((600, 300), 255, dtype=float)
-		self._binary_img = np.zeros((600, 300))
+		self._img_array = np.full((self._IMG_HEIGHT, self._IMG_WIDTH), 255, dtype=float)
+		self._binary_img = np.zeros((self._IMG_HEIGHT, self._IMG_WIDTH))
 
-		master.geometry('600x400')
+		master.geometry(f'{self._IMG_WIDHT}x{self._IMG_HEIGHT}')
 
 		# フレームの初期化
 		self.master = master
@@ -46,7 +49,7 @@ class GuiManager(tkinter.Frame):
 
 		# 画像の描画
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(self._img_array))
-		self.canvas = tkinter.Canvas(self.master, width=600, height=300)
+		self.canvas = tkinter.Canvas(self.master, width=self._IMG_WIDTH, height=self._IMG_HEIGHT + 100)
 		self.canvas.place(x=0, y=0)
 		self.img_item = self.canvas.create_image(0, 0, image=self.img, anchor=tkinter.NW)
 
