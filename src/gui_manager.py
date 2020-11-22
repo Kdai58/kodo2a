@@ -33,7 +33,7 @@ class GuiManager(tkinter.Frame):
 		self._img_array = np.full((self._IMG_HEIGHT, self._IMG_WIDTH), 255, dtype=float)
 		self._binary_img = np.zeros((self._IMG_HEIGHT, self._IMG_WIDTH))
 
-		master.geometry(f'{self._IMG_WIDHT}x{self._IMG_HEIGHT}')
+		master.geometry(f'{self._IMG_WIDTH}x{self._IMG_HEIGHT + 100}')
 
 		# フレームの初期化
 		self.master = master
@@ -49,7 +49,7 @@ class GuiManager(tkinter.Frame):
 
 		# 画像の描画
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(self._img_array))
-		self.canvas = tkinter.Canvas(self.master, width=self._IMG_WIDTH, height=self._IMG_HEIGHT + 100)
+		self.canvas = tkinter.Canvas(self.master, width=self._IMG_WIDTH, height=self._IMG_HEIGHT)
 		self.canvas.place(x=0, y=0)
 		self.img_item = self.canvas.create_image(0, 0, image=self.img, anchor=tkinter.NW)
 
@@ -83,7 +83,7 @@ class GuiManager(tkinter.Frame):
 				absolute_entropy=absolute_entropy, 
 				relative_entropy=relative_entropy, 
 				img_array=self._img_array)
-			self._img_array[i % 600] = np.full(300, 0)
+			self._img_array[i % self._IMG_HEIGHT] = np.full(self._IMG_WIDTH, 0)
 			print(self._img_array[i % 600])
 			print(i)
 			i += 1
