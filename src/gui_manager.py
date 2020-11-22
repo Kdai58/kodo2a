@@ -3,9 +3,9 @@
 """
 
 作成者：兼平大輔
-日付：2020.11.18
-バージョン：4.0
-変更内容：テキストを画像の上に表示するようにした．
+日付：2020.11.23
+バージョン：7.0
+変更内容：結合テスト用にGuiManagerを修正した．
 
 """
 
@@ -63,13 +63,20 @@ class GuiManager(tkinter.Frame):
 		# 相対エントロピー
 		self.relative_entropy_text_item = self.canvas.create_text(10, 40, text="relative entropy = " + '0', anchor=tkinter.NW)
 
-    # 監視処理を別スレッドで実行する
 	def monitor_callback(self):
+		"""
+        monitor()で行う処理を別スレッドで行う為のコールバック関数．
+		"""
+
 		thread = threading.Thread(target=self.monitor, args=())
 		thread.setDaemon(True)
 		thread.start()
 
 	def monitor(self):
+		"""
+		一定時間ごとにwebカメラの画像を受け取り，絶対エントロピー，相対エントロピー，乱雑度を求め，GUIの表示を更新する．
+		"""
+
 		i = 0
 		relative_entropy_analyser = RelativeEntropyAnalyser()
 
@@ -89,8 +96,21 @@ class GuiManager(tkinter.Frame):
 			print(i)
 			i += 1
 
-    # room_entropyの値に応じてアラートメッセージを更新する
 	def update_gui(self, entropy_level, absolute_entropy, relative_entropy, img_array):
+		"""
+		表示画像，アラートメッセージの表示，相対エントロピーの表示，絶対エントロピーの表示を更新する．
+
+		Parameters
+		----------
+		entropy_level: int
+		  乱雑度
+		absolute_entropy: float
+		  絶対エントロピー
+		relative_entropy: float
+		  相対エントロピー
+		img_array: int[][]
+		  表示画像
+		"""
 		self._print_img(img_array)
 
 		self._print_exception(entropy_level)
@@ -99,13 +119,28 @@ class GuiManager(tkinter.Frame):
 
 		self._reprint_relative_entropy(relative_entropy)
 
-	# 画像の描画
 	def _print_img(self, img_array):
+		"""
+		GUIに画像を表示する．
+
+		Parameters
+		----------
+		img_array: int[][]
+		  表示画像
+		"""
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(img_array))
 		self.canvas.itemconfig(self.img_item, image=self.img)
 
-	# アラートの表示
 	def _print_exception(self, entropy_level):
+		"""
+		乱雑度に対応したアラートメッセージを表示する．
+
+		Parameters
+		----------
+		entropy_level: int
+		  相対エントロピー
+		"""
+
 		if entropy_level == 0:
 			self.canvas.itemconfig(self.alert_text_item, text=self._PRAISE_STR, fill='green')
 		elif entropy_level == 1:
@@ -113,25 +148,57 @@ class GuiManager(tkinter.Frame):
 		else:
 			self.canvas.itemconfig(self.alert_text_item, text=self._WARN_STR, fill='red')
 
-	# 絶対エントロピーを表示
 	def _reprint_absolute_entropy(self, absolute_entropy):
+		"""
+		絶対エントロピーを表示
+
+		Parameters
+		----------
+		absolute_entropy: float
+		  絶対エントロピー
+		"""
+
 		self.canvas.itemconfig(self.absolute_entropy_text_item, text='absolute entropy = ' + str(absolute_entropy))
 
-	# 相対エントロピーを表示
 	def _reprint_relative_entropy(self, relative_entropy):
+		"""
+        相対エントロピーを表示する．
+
+        Parameters
+        ----------
+        relative_entropy: float
+	      相対エントロピー
+		"""
+
 		self.canvas.itemconfig(self.relative_entropy_text_item, text='relative entropy = ' + str(relative_entropy))
 
-	# 乱雑度のレベルを求める
-	# とりあえずrelative_entropyが0, 1, 2であると仮定して，relative_entropyの値を返すようにしている．
+	# 乱雑度を求める
 	def _to_entropy_level(self, relative_entropy):
-		if relative_entropy == 0:
+		"""
+	    相対エントロピーを受け取り，乱雑度を求める．
+
+	    Parameters
+	    ----------
+	    relative_entropy: float
+	      相対エントロピー
+
+	    Returns
+	    -------
+	    int
+	      求めた乱雑度
+	    """
+
+		if 0 <= relative_entropy and relative_entropy < 1:
 			return 0
-		elif relative_entropy == 1:
+		elif 1 <= relative_entropy and relative_entropy < 2:
 			return 1
 		else:
 			return 2
 
 	def destroy_gui(self):
+		"""
+		GUIを停止する．
+		"""
 		self.master.destroy()
 
 
