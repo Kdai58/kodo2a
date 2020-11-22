@@ -21,16 +21,19 @@ class GuiManager(tkinter.Frame):
 	def __init__(self, master=None):
 		super().__init__(master)
 
-		self.PRAISE_STR = 'How beautiful your room is'
-		self.NORMAL_STR = 'Endeavor putting your room in order'
-		self.WARN_STR = 'How dirty your room is'
+		# 画像のサイズ（とりあえず600x300にしてある）
+		self._IMG_WIDTH = 600
+		self._IMG_HEIGHT = 300
+
+		self._PRAISE_STR = 'How beautiful your room is'
+		self._NORMAL_STR = 'Endeavor putting your room in order'
+		self._WARN_STR = 'How dirty your room is'
 
 		# 画像のピクセルを格納するndarray
-		# 画像のサイズはとりあえず600x300にしてある
-		self._img_array = np.full((600, 300), 255, dtype=float)
-		self._binary_img = np.zeros((600, 300))
+		self._img_array = np.full((self._IMG_HEIGHT, self._IMG_WIDTH), 255, dtype=float)
+		self._binary_img = np.zeros((self._IMG_HEIGHT, self._IMG_WIDTH))
 
-		master.geometry('600x400')
+		master.geometry(f'{self._IMG_WIDTH}x{self._IMG_HEIGHT + 100}')
 
 		# フレームの初期化
 		self.master = master
@@ -46,13 +49,13 @@ class GuiManager(tkinter.Frame):
 
 		# 画像の描画
 		self.img = ImageTk.PhotoImage(image=Image.fromarray(self._img_array))
-		self.canvas = tkinter.Canvas(self.master, width=600, height=300)
+		self.canvas = tkinter.Canvas(self.master, width=self._IMG_WIDTH, height=self._IMG_HEIGHT)
 		self.canvas.place(x=0, y=0)
 		self.img_item = self.canvas.create_image(0, 0, image=self.img, anchor=tkinter.NW)
 
 		# テキストの設定
 		# アラートメッセージ
-		self.alert_text_item = self.canvas.create_text(10, 0, text=self.NORMAL_STR, anchor=tkinter.NW)
+		self.alert_text_item = self.canvas.create_text(10, 0, text=self._NORMAL_STR, anchor=tkinter.NW)
 
 		# 絶対エントロピー
 		self.absolute_entropy_text_item = self.canvas.create_text(10, 20, text="absolute entropy = " + '0', anchor=tkinter.NW)
@@ -80,7 +83,7 @@ class GuiManager(tkinter.Frame):
 				absolute_entropy=absolute_entropy, 
 				relative_entropy=relative_entropy, 
 				img_array=self._img_array)
-			self._img_array[i % 600] = np.full(300, 0)
+			self._img_array[i % self._IMG_HEIGHT] = np.full(self._IMG_WIDTH, 0)
 			print(self._img_array[i % 600])
 			print(i)
 			i += 1
@@ -103,11 +106,11 @@ class GuiManager(tkinter.Frame):
 	# アラートの表示
 	def _print_exception(self, entropy_level):
 		if entropy_level == 0:
-			self.canvas.itemconfig(self.alert_text_item, text=self.PRAISE_STR, fill='green')
+			self.canvas.itemconfig(self.alert_text_item, text=self._PRAISE_STR, fill='green')
 		elif entropy_level == 1:
-			self.canvas.itemconfig(self.alert_text_item, text=self.NORMAL_STR, fill='black')
+			self.canvas.itemconfig(self.alert_text_item, text=self._NORMAL_STR, fill='black')
 		else:
-			self.canvas.itemconfig(self.alert_text_item, text=self.WARN_STR, fill='red')
+			self.canvas.itemconfig(self.alert_text_item, text=self._WARN_STR, fill='red')
 
 	# 絶対エントロピーを表示
 	def _reprint_absolute_entropy(self, absolute_entropy):
