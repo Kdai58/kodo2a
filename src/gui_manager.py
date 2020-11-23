@@ -19,12 +19,14 @@ from PIL import Image, ImageTk
 #from relative_entropy_analyser import RelativeEntropyAnalyser
 
 class GuiManager(tkinter.Frame):
-	def __init__(self, master=None):
+	def __init__(self, master=None, width=600, height=300, sleep_sec=5):
 		super().__init__(master)
 
+		self._SLEEP_SEC = sleep_sec
+
 		# 画像のサイズ（とりあえず600x300にしてある）
-		self._IMG_WIDTH = 600
-		self._IMG_HEIGHT = 300
+		self._IMG_WIDTH = width
+		self._IMG_HEIGHT = height
 
 		self._PRAISE_STR = 'How beautiful your room is'
 		self._NORMAL_STR = 'Endeavor putting your room in order'
@@ -84,7 +86,7 @@ class GuiManager(tkinter.Frame):
 		# ここに部屋の監視の処理を書く．
 		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
 		while (1):
-			time.sleep(3)
+			time.sleep(self._SLEEP_SEC)
 			absolute_entropy = i % 3
 			# relative_entropy = relative_entropy_analyser.calc_relative_entropy(self._img_array, absolute_entropy)
 			relative_entropy = i % 3
@@ -204,7 +206,7 @@ class GuiManager(tkinter.Frame):
 		self.master.destroy()
 
 
-if __name__ == "__main__":
-	root = tkinter.Tk()
-	dlg = GuiManager(master=root)
-	dlg.mainloop()
+# if __name__ == "__main__":
+# 	root = tkinter.Tk()
+# 	dlg = GuiManager(master=root)
+# 	dlg.mainloop()
