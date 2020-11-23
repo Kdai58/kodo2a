@@ -2,9 +2,9 @@
 
 作成者 寺尾佳祐
 作成日 11/23
-ver2.0
+ver3.0
 初期内容(ver1.0) : とりあえず動くようにランダム関数を使用
-変更内容 :  calc_absolute_entropyを呼び出すとエッジ検出した画像を出力
+変更内容 :  36~48行目 平均画素値を出すことでエッジの量を推定するプログラムを追加
 
 """
 #(仮)周波数化された入力画像から0~2の３値に分類
@@ -32,7 +32,21 @@ class calc_absolute_entropy:
         edges = cv2.Canny(img, 90, 180, L2gradient = True)
         cv2.imwrite(fname_out, edges)
 
+
+        #エッジの量を計算
+        #平均画素値が高いほどエッジが多いとする
+        mean_value = 0
+        height = edges.shape[0]
+        width  = edges.shape[1]
+        for y in range(height):
+            for x in range(width):
+                mean_value += edges[y,x]
+
+        mean_value = mean_value / (height * width)
         
+        #平均画素値を出力
+        print('平均画素値は{}です'.format(mean_value))
+
 
 
 
