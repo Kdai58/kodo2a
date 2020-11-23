@@ -17,6 +17,7 @@ class CameraImgExtractor:
     def __init__(self):
         self.cap = None
         self._WEB_CAMERA_NUMBER = 0
+        self._open_webcam_stream()
 
     def _open_webcam_stream(self):
         self.cap = cv2.VideoCapture(self._WEB_CAMERA_NUMBER)
@@ -24,7 +25,8 @@ class CameraImgExtractor:
     def exists_webcam(self):
         return True
     def read_img(self):
-        return np.random.randint(0, 256, (300, 600))
+        ret, frame = self.cap.read()
+        return frame
 
     def release_webcam_stream(self):
         self.cap.release()
