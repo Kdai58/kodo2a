@@ -6,6 +6,7 @@
 日付：2020.11.23
 バージョン：1.1
 変更内容：属性の初期化をコンストラクタ内で行うように変更
+変更内容：リストを{}と勘違いしていたのを[]に変更
 変更予定：メソッドの実装
 
 """
@@ -40,7 +41,7 @@ class RelativeEntropyAnalyser:
     コンストラクタ（今のところ不要）
     """
     self._previous_absolute_entropies = \
-    {0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0}  # イメージするための仮のfloat[], 旧 previous_entropies
+    [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5 # 結合用の仮のfloat
 
   def _new_entropies_log_if_needed(self):
