@@ -4,8 +4,10 @@
 
 作成者：兼平大輔
 日付：2020.11.23
-バージョン：8.0
+バージョン：9.0
 変更内容：GuiManager.monitor()にwebカメラの画像を読み取る処理を追加する．
+変更内容：GuiManagerの画像サイズの初期化処理を修正
+
 
 """
 
@@ -20,22 +22,26 @@ from camera_img_extractor import CameraImgExtractor
 #from relative_entropy_analyser import RelativeEntropyAnalyser
 
 class GuiManager(tkinter.Frame):
-	def __init__(self, master=None, width=600, height=300, sleep_sec=5):
+	def __init__(self, master=None, sleep_sec=5):
 		super().__init__(master)
 
 		self._SLEEP_SEC = sleep_sec
 
-		# 画像のサイズ（とりあえず600x300にしてある）
-		self._IMG_WIDTH = width
-		self._IMG_HEIGHT = height
+		self.camera_img_extractor = CameraImgExtractor()
+
+		# カラー画像を格納するndarray
+		self._img_array = self.camera_img_extractor.read_img()
+
+		# 画像のサイズ（webカメラから読み取った画像にサイズで初期化）
+		self._IMG_WIDTH = self._img_array.shape[1]
+		self._IMG_HEIGHT = self._img_array.shape[0]
+
+		# 二値画像を格納するndarray
+		self._binary_img = np.zeros((self._IMG_HEIGHT, self._IMG_WIDTH))
 
 		self._PRAISE_STR = 'How beautiful your room is'
 		self._NORMAL_STR = 'Endeavor putting your room in order'
 		self._WARN_STR = 'How dirty your room is'
-
-		# 画像のピクセルを格納するndarray
-		self._img_array = np.full((self._IMG_HEIGHT, self._IMG_WIDTH), 255, dtype=float)
-		self._binary_img = np.zeros((self._IMG_HEIGHT, self._IMG_WIDTH))
 
 		master.geometry(f'{self._IMG_WIDTH}x{self._IMG_HEIGHT + 100}')
 
@@ -82,23 +88,24 @@ class GuiManager(tkinter.Frame):
 		"""
 
 		i = 0
-		camera_img_extractor = CameraImgExtractor()
 		# relative_entropy_analyser = RelativeEntropyAnalyser()
 
 		# ここに部屋の監視の処理を書く．
 		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
 		while (1):
 			time.sleep(self._SLEEP_SEC)
+
 			absolute_entropy = i % 3
 			# relative_entropy = relative_entropy_analyser.calc_relative_entropy(self._img_array, absolute_entropy)
 			relative_entropy = i % 3
+			self._img_array = self.camera_img_extractor.read_img()
 			entropy_level = self._to_entropy_level(relative_entropy)
+
 			self.update_gui(entropy_level=entropy_level, 
 				absolute_entropy=absolute_entropy, 
 				relative_entropy=relative_entropy, 
 				img_array=self._img_array)
-			self._img_array = camera_img_extractor.read_img()
-			print(self._img_array[i % 600])
+			print(self._img_array)
 			print(i)
 			i += 1
 
