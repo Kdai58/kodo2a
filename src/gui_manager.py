@@ -4,8 +4,8 @@
 
 作成者：兼平大輔
 日付：2020.11.23
-バージョン：7.0
-変更内容：結合テスト用にGuiManagerを修正した．
+バージョン：8.0
+変更内容：GuiManager.monitor()にwebカメラの画像を読み取る処理を追加する．
 
 """
 
@@ -16,6 +16,7 @@ import threading
 import random
 import time
 from PIL import Image, ImageTk
+from camera_img_extractor import CameraImgExtractor
 #from relative_entropy_analyser import RelativeEntropyAnalyser
 
 class GuiManager(tkinter.Frame):
@@ -81,6 +82,7 @@ class GuiManager(tkinter.Frame):
 		"""
 
 		i = 0
+		camera_img_extractor = CameraImgExtractor()
 		# relative_entropy_analyser = RelativeEntropyAnalyser()
 
 		# ここに部屋の監視の処理を書く．
@@ -95,7 +97,7 @@ class GuiManager(tkinter.Frame):
 				absolute_entropy=absolute_entropy, 
 				relative_entropy=relative_entropy, 
 				img_array=self._img_array)
-			self._img_array[i % self._IMG_HEIGHT] = np.full(self._IMG_WIDTH, 0)
+			self._img_array = camera_img_extractor.read_img()
 			print(self._img_array[i % 600])
 			print(i)
 			i += 1
