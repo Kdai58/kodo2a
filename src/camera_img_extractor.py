@@ -30,15 +30,15 @@ class CameraImgExtractor:
         self.cap.release()
         cv2.destroyAllWindows()
 
-if __name__ == "__main__":
-    camera_img_extractor = CameraImgExtractor()
-    camera_img_extractor._open_webcam_stream()
+# if __name__ == "__main__":
+#     camera_img_extractor = CameraImgExtractor()
+#     camera_img_extractor._open_webcam_stream()
 
-    while 1:
-        ret, frame = camera_img_extractor.cap.read()
-        cv2.imshow('sample', frame)
+#     while 1:
+#         ret, frame = camera_img_extractor.cap.read()
+#         cv2.imshow('sample', frame)
 
-        # k = cv2.waitkey(1)
-        # if k == 27:
-        #     break
-    camera_img_extractor.release_webcam_stream()
+#         k = cv2.waitKey(1)
+#         if k == 27:
+#             break
+#     camera_img_extractor.release_webcam_stream()
