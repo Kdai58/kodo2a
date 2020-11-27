@@ -97,10 +97,11 @@ class RelativeEntropyAnalyser:
 
   def _update_entropy_logs(self):
     """
-    受け取った絶対エントロピーをログファイルに記録
+    受け取った絶対エントロピーをログファイルに上書き
+    速度が落ちるようであれば追記にするとよい
     """
-    # void
-    pass
+    with open(self._LOG_FILE_PATH, mode='x') as log_file:
+      log_file.writelines(self._absolute_entropy_logs)
 
 
   def close_log_file(self):
