@@ -78,6 +78,14 @@ class RelativeEntropyAnalyser:
     float
       計算した相対エントロピー
     """
+    self._new_entropies_log_if_needed()
+    self._load_previous_entropies()
+
+    #TODO: calc
+
+    self._update_previous_entropies()
+    self.close_log_file()
+
     # 結合用の仮のfloatを返す
     # 副作用：[0, 1.0): キレイ, [1.0, 2.0): 普通, [2.0, 3.0]: 汚い
     return self._relative_entropy # 仮値 1.5
