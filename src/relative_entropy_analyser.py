@@ -40,8 +40,8 @@ class RelativeEntropyAnalyser:
     """
     コンストラクタ（今のところ不要）
     """
-    self._previous_absolute_entropies = \
-    [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
+    self._previous_absolute_entropies # = \
+    # [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5  # 結合用の仮のfloat
     self._LOG_FILE_PATH = '../dest/previous_entropies.log'  #.logファイルに変更 名前がわかりやすいだけ
     self._new_entropies_log_if_needed()
@@ -56,8 +56,8 @@ class RelativeEntropyAnalyser:
     """
     try:
       # mode x: 存在'する'場合にエラー
-      with open(self._LOG_FILE_PATH, mode='x') as _log_file:
-        _log_file.write(None)
+      with open(self._LOG_FILE_PATH, mode='x') as log_file:
+        log_file.write(None)
     except FileExistsError:
       pass
 
@@ -66,6 +66,8 @@ class RelativeEntropyAnalyser:
     """
     相対エントロピーをログファイルからロード
     """
+    with open(self._LOG_FILE_PATH, mode='r') as log_file:
+      self._previous_absolute_entropies = log_file.readlines()
 
   def calc_relative_entropy(self, img, absolute_entropy):
     """
