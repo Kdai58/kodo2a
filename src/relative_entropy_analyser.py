@@ -87,6 +87,7 @@ class RelativeEntropyAnalyser:
     """
     #TODO: calc
 
+    self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
     self.close_log_file()
 
@@ -110,3 +111,16 @@ class RelativeEntropyAnalyser:
   #   """
   #   # void
   #   pass
+
+  def debug_logs_process(self):
+    debug_img = [[1, 0], [0, 1]]
+    debug_abs_entropy = 1.5
+    self.calc_realative_entropy(debug_img, debug_abs_entropy)
+    # calc_realative_entropy()
+
+
+#debug
+relative_entropy_analyser = RelativeEntropyAnalyser()
+# __init__()で_new_entropy_logs_if_needed()
+# __init__()で_load_entropy_logs()
+relative_entropy_analyser.debug_logs_process()
