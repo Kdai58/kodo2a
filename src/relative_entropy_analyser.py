@@ -53,11 +53,15 @@ class RelativeEntropyAnalyser:
   def _new_entropies_log_if_needed(self):
     """
     ログファイルが存在しなければ生成
+    @see https://note.nkmk.me/python-file-io-open-with/
     """
     self._log_file = open(self._LOG_FILE_PATH)
-
-    # void
-    pass
+    try:
+      # mode x: 存在'する'場合にエラー
+      with open(self._LOG_FILE_PATH, mode='x') as _tmp_log_file:
+        _tmp_log_file.write(None)
+    except FileExistsError:
+      pass
 
 
   def _load_previous_entropies(self):
