@@ -67,7 +67,8 @@ class RelativeEntropyAnalyser:
     相対エントロピーをログファイルからロード
     """
     with open(self._LOG_FILE_PATH, mode='r') as log_file:
-      self._absolute_entropy_logs = log_file.readlines()
+      str_entropy_list = log_file.readlines()
+      self._absolute_entropy_logs = [float(s) for s in str_entropy_list] # To float list
 
   def calc_relative_entropy(self, img, absolute_entropy):
     """
@@ -89,7 +90,7 @@ class RelativeEntropyAnalyser:
 
     self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
-    self.close_log_file()
+    # self.close_log_file()
 
     # 結合用の仮のfloatを返す
     # 副作用：[0, 1.0): キレイ, [1.0, 2.0): 普通, [2.0, 3.0]: 汚い
@@ -102,7 +103,8 @@ class RelativeEntropyAnalyser:
     速度が落ちるようであれば追記にするとよい
     """
     with open(self._LOG_FILE_PATH, mode='w') as log_file:
-      log_file.writelines(self._absolute_entropy_logs)
+      str_entropy_list = [str(float_entropy) + '\n' for float_entropy in self._absolute_entropy_logs] # To string list
+      log_file.writelines(str_entropy_list)
 
 
   # def close_log_file(self):
