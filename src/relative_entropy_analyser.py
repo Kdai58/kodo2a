@@ -101,7 +101,7 @@ class RelativeEntropyAnalyser:
     受け取った絶対エントロピーをログファイルに上書き
     速度が落ちるようであれば追記にするとよい
     """
-    with open(self._LOG_FILE_PATH, mode='x') as log_file:
+    with open(self._LOG_FILE_PATH, mode='w') as log_file:
       log_file.writelines(self._absolute_entropy_logs)
 
 
@@ -112,6 +112,7 @@ class RelativeEntropyAnalyser:
   #   # void
   #   pass
 
+
   def debug_logs_process(self):
     debug_img = [[1, 0], [0, 1]]
     debug_abs_entropy = 1.5
@@ -119,7 +120,7 @@ class RelativeEntropyAnalyser:
     # calc_realative_entropy()
 
 
-#debug
+# debug
 relative_entropy_analyser = RelativeEntropyAnalyser()
 # __init__()で_new_entropy_logs_if_needed()
 # __init__()で_load_entropy_logs()
