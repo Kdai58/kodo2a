@@ -43,7 +43,6 @@ class RelativeEntropyAnalyser:
     self._previous_absolute_entropies = \
     [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5  # 結合用の仮のfloat
-    self._log_file
     self._LOG_FILE_PATH = '../dest/previous_entropies.log'  #.logファイルに変更 名前がわかりやすいだけ
     self._new_entropies_log_if_needed()
     self._load_previous_entropies()
@@ -55,11 +54,10 @@ class RelativeEntropyAnalyser:
     ログファイルが存在しなければ生成
     @see https://note.nkmk.me/python-file-io-open-with/
     """
-    self._log_file = open(self._LOG_FILE_PATH)
     try:
       # mode x: 存在'する'場合にエラー
-      with open(self._LOG_FILE_PATH, mode='x') as _tmp_log_file:
-        _tmp_log_file.write(None)
+      with open(self._LOG_FILE_PATH, mode='x') as _log_file:
+        _log_file.write(None)
     except FileExistsError:
       pass
 
@@ -68,9 +66,6 @@ class RelativeEntropyAnalyser:
     """
     相対エントロピーをログファイルからロード
     """
-    # void
-    pass
-
 
   def calc_relative_entropy(self, img, absolute_entropy):
     """
