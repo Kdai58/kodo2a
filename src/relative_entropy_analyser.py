@@ -42,7 +42,9 @@ class RelativeEntropyAnalyser:
     """
     self._previous_absolute_entropies = \
     [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
-    self._relative_entropy = 1.5 # 結合用の仮のfloat
+    self._relative_entropy = 1.5  # 結合用の仮のfloat
+    
+    self._LOGFILE_PATH = '../dest/previous_entropies.log' #.logファイルに変更 名前がわかりやすいだけ
 
   def _new_entropies_log_if_needed(self):
     """
