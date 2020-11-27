@@ -104,9 +104,9 @@ class RelativeEntropyAnalyser:
       log_file.writelines(self._absolute_entropy_logs)
 
 
-  def close_log_file(self):
-    """
-    ログファイルのクローズ
-    """
-    # void
-    pass
+  # def close_log_file(self):
+  #   """
+  #   ログファイルのクローズ
+  #   """
+  #   # void
+  #   pass
