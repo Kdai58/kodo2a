@@ -57,7 +57,7 @@ class RelativeEntropyAnalyser:
     try:
       # mode x: 存在'する'場合にエラー
       with open(self._LOG_FILE_PATH, mode='x') as log_file:
-        log_file.write(None)
+        log_file.write('')
     except FileExistsError:
       pass
 
@@ -125,3 +125,4 @@ relative_entropy_analyser = RelativeEntropyAnalyser()
 # __init__()で_new_entropy_logs_if_needed()
 # __init__()で_load_entropy_logs()
 relative_entropy_analyser.debug_logs_process()
+print("Done!")
