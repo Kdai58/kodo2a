@@ -43,13 +43,19 @@ class RelativeEntropyAnalyser:
     self._previous_absolute_entropies = \
     [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5  # 結合用の仮のfloat
-    
-    self._LOGFILE_PATH = '../dest/previous_entropies.log' #.logファイルに変更 名前がわかりやすいだけ
+    self._log_file
+    self._LOG_FILE_PATH = '../dest/previous_entropies.log'  #.logファイルに変更 名前がわかりやすいだけ
+    self._new_entropies_log_if_needed()
+    self._load_previous_entropies()
+
+
 
   def _new_entropies_log_if_needed(self):
     """
     ログファイルが存在しなければ生成
     """
+    self._log_file = open(self._LOG_FILE_PATH)
+
     # void
     pass
 
@@ -78,9 +84,6 @@ class RelativeEntropyAnalyser:
     float
       計算した相対エントロピー
     """
-    self._new_entropies_log_if_needed()
-    self._load_previous_entropies()
-
     #TODO: calc
 
     self._update_previous_entropies()
