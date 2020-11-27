@@ -17,20 +17,20 @@ class RelativeEntropyAnalyser:
   
   Attributes
   ----------
-  previous_absolute_entropies: float[]
+  _absolute_entropy_logs: float[]
     以前までの絶対エントロピーのログを保存
-  relative_entropy: float
+  _relative_entropy: float
     求める相対エントロピーを保存
 
   Methods
   -------
-  new_entropies_log_if_needed(): void
+  _new_entropy_logs_if_needed(): void
     ログファイルが存在しなければ生成
-  load_previous_entropies(): void
+  _load_entropy_logs(): void
     相対エントロピーをログファイルからロード
   calc_relative_entropy(img: int[][], absolute_entropy: float): float
     今の絶対エントロピーを受け取り，相対エントロピーを計算
-  update_previous_entropies(): void
+  _update_entropy_logs(): void
     受け取った絶対エントロピーをログファイルに記録
   close_log_file(): void
     ログファイルのクローズ
@@ -40,16 +40,16 @@ class RelativeEntropyAnalyser:
     """
     コンストラクタ（今のところ不要）
     """
-    self._previous_absolute_entropies # = \
+    self._absolute_entropy_logs # = \
     # [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5  # 結合用の仮のfloat
     self._LOG_FILE_PATH = '../dest/previous_entropies.log'  #.logファイルに変更 名前がわかりやすいだけ
-    self._new_entropies_log_if_needed()
-    self._load_previous_entropies()
+    self._new_entropy_logs_if_needed()
+    self._load_entropy_logs()
 
 
 
-  def _new_entropies_log_if_needed(self):
+  def _new_entropy_logs_if_needed(self):
     """
     ログファイルが存在しなければ生成
     @see https://note.nkmk.me/python-file-io-open-with/
@@ -62,12 +62,12 @@ class RelativeEntropyAnalyser:
       pass
 
 
-  def _load_previous_entropies(self):
+  def _load_entropy_logs(self):
     """
     相対エントロピーをログファイルからロード
     """
     with open(self._LOG_FILE_PATH, mode='r') as log_file:
-      self._previous_absolute_entropies = log_file.readlines()
+      self._absolute_entropy_logs = log_file.readlines()
 
   def calc_relative_entropy(self, img, absolute_entropy):
     """
@@ -87,7 +87,7 @@ class RelativeEntropyAnalyser:
     """
     #TODO: calc
 
-    self._update_previous_entropies()
+    self._update_entropy_logs()
     self.close_log_file()
 
     # 結合用の仮のfloatを返す
@@ -95,7 +95,7 @@ class RelativeEntropyAnalyser:
     return self._relative_entropy # 仮値 1.5
 
 
-  def _update_previous_entropies(self):
+  def _update_entropy_logs(self):
     """
     受け取った絶対エントロピーをログファイルに記録
     """
