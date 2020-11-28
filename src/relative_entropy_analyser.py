@@ -141,16 +141,17 @@ class RelativeEntropyAnalyser:
       print('Error: Failed to append abs-entropy')
       sys.exit()
     else:
-      latest_abs = self._absolute_entropy_logs[logs_len]
+      latest_abs = self._absolute_entropy_logs[logs_len - 1]
 
     if logs_len == 1:
       noise_delta = latest_abs * DELTA_RATE
     else:
-      prev_abs = self._absolute_entropy_logs[logs_len - 1]
-      noise_delta = latest_abs - prev_abs
+      prev_abs = self._absolute_entropy_logs[logs_len - 2]
+      noise_delta = (latest_abs - prev_abs) * DELTA_RATE
 
     for i in range(NOISE_NUM):
       self._absolute_entropy_logs.append(latest_abs + (noise_delta * (i - (NOISE_NUM / 2.0))))
+
 
   # def close_log_file(self):
   #   """
