@@ -101,7 +101,7 @@ class RelativeEntropyAnalyser:
     range = max_abs_entropy - min_abs_entropy
     relative_pos = absolute_entropy - min_abs_entropy
     
-    self._relative_entropy = relative_pos / range
+    self._relative_entropy = float(relative_pos) / range
     self._relative_entropy *= 3.0 # [0,3]に正規化
 
     self._absolute_entropy_logs.append(self._relative_entropy)
