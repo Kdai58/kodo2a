@@ -11,6 +11,7 @@
 
 """
 
+
 class RelativeEntropyAnalyser:
   """
   相対エントロピーの解析器
@@ -86,7 +87,8 @@ class RelativeEntropyAnalyser:
     float
       計算した相対エントロピー
     """
-    #TODO: calc
+    # logのリストに引数のabsを追加
+    self._absolute_entropy_logs.append(absolute_entropy)
 
     self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
@@ -99,7 +101,7 @@ class RelativeEntropyAnalyser:
 
   def _update_entropy_logs(self):
     """
-    受け取った絶対エントロピーをログファイルに上書き
+    絶対エントロピーをログファイルに上書き
     速度が落ちるようであれば追記にするとよい
     """
     with open(self._LOG_FILE_PATH, mode='w') as log_file:
