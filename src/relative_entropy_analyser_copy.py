@@ -3,11 +3,11 @@
 """
 
 作成者：AL18036 片岡凪
-日付：2020.11.23
-バージョン：1.1
-変更内容：属性の初期化をコンストラクタ内で行うように変更
-変更内容：リストを{}と勘違いしていたのを[]に変更
-変更予定：メソッドの実装
+日付：2020.11.28 19:00
+バージョン：1.3 (1.2のときコメント忘れてました)
+変更内容：_calc_relative_entropy()を実装
+変更内容：テストのmain処理を作成
+変更予定：結合テストが上手くいかなければ調節
 
 """
 
@@ -94,18 +94,19 @@ class RelativeEntropyAnalyser:
     # リストをnarrayに変更
     abs_entropy_logs = np.array(self._absolute_entropy_logs)
 
-    # calc _relative_entropy (\in [0.0, 3.0])
+    # _relative_entropy を計算 (\in [0.0, 3.0])
     max_abs_entropy = abs_entropy_logs.max()
     min_abs_entropy = abs_entropy_logs.min()
 
     range = max_abs_entropy - min_abs_entropy
     relative_pos = absolute_entropy - min_abs_entropy
     
-    if (range != 0):
+    if (range != 0): # 0除算の例外処理
       self._relative_entropy = float(relative_pos) / range
       self._relative_entropy *= 3.0  # [0,3]に正規化
     else:
-      self._relative_entropy = 3.0 / 2
+      # データが1つ or 同じデータしかない場合
+      self._relative_entropy = 3.0 / 2 # 正規化の中央の値
 
     self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
