@@ -20,6 +20,7 @@ import random
 import time
 from PIL import Image, ImageTk
 from camera_img_extractor import CameraImgExtractor
+from AbsoluteEntropyAnalyser import AbsoluteEntropyAnalyser
 from relative_entropy_analyser import RelativeEntropyAnalyser
 
 class GuiManager(tkinter.Frame):
@@ -88,7 +89,7 @@ class GuiManager(tkinter.Frame):
 		一定時間ごとにwebカメラの画像を受け取り，絶対エントロピー，相対エントロピー，乱雑度を求め，GUIの表示を更新する．
 		"""
 
-		i = 0
+		absolute_entropy_analyser = AbsoluteEntropyAnalyser()
 		relative_entropy_analyser = RelativeEntropyAnalyser()
 
 		# ここに部屋の監視の処理を書く．
@@ -96,7 +97,7 @@ class GuiManager(tkinter.Frame):
 		while (1):
 			time.sleep(self._SLEEP_SEC)
 
-			absolute_entropy = random.randint(0, 100)
+			absolute_entropy = absolute_entropy_analyser.calc_absolute_entropy(self._img_array)
 			relative_entropy = relative_entropy_analyser.calc_relative_entropy(self._img_array, absolute_entropy)
 			self._img_array = self.camera_img_extractor.read_img()
 			entropy_level = self._to_entropy_level(relative_entropy)
