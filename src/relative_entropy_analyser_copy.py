@@ -94,6 +94,14 @@ class RelativeEntropyAnalyser:
     # リストをnarrayに変更
     abs_entropy_logs = np.array(self._absolute_entropy_logs)
 
+    # calc
+    max_abs_entropy = abs_entropy_logs.max()
+    min_abs_entropy = abs_entropy_logs.min()
+    range = max_abs_entropy - min_abs_entropy
+    relative_pos = absolute_entropy - min_abs_entropy
+    rtn_relative_entropy = relative_pos / range
+    rtn_relative_entropy *= 3.0 # [0,3]に正規化
+
     self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
     # self.close_log_file()
