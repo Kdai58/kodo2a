@@ -171,19 +171,19 @@ class RelativeEntropyAnalyser:
 
 # (済)デバッグ２：_calc_entropy_analyser()
 # # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
-  def _debug_print(self):
+  def _debug_print(self, debug_abs_entropy):
     print("Updated a-entropies: ", self._absolute_entropy_logs)
+    print("Added a-entropy: ", str(debug_abs_entropy))
     print("Calced r-entropy: ", str(self._relative_entropy))
 
 
 debug_img = [[1, 0], [0, 1]] # 動作に関係ない
 # debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
 debug_abs_entropy = random.randint(0, 100) # [0, 100]
-print("Added a-entropy: ", str(debug_abs_entropy))
 
 # new
 relative_entropy_analyser = RelativeEntropyAnalyser()
 # calc
 relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
 # print
-relative_entropy_analyser._debug_print()
+relative_entropy_analyser._debug_print(debug_abs_entropy)
