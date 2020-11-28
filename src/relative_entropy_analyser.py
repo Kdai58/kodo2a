@@ -3,16 +3,17 @@
 """
 
 作成者：AL18036 片岡凪
-日付：2020.11.28 19:00
-バージョン：1.3 (1.2のときコメント忘れてました)
-変更内容：calc_relative_entropy()を実装
-変更内容：テストのmain処理を作成
-変更予定：最初のentropy(R)の振れ幅が大きいのを修正
+日付：2020.11.28 22:30～
+バージョン：1.4
+変更内容：精度のため、相対エントロピーのlogにノイズを追加 #58
+目的：データが少ないときに安定して判別してほしい
+目的：外れ値に強く反応してほしい（物が置かれて汚くなったり）
 
 """
 
 import numpy as np
 import random
+import sys
 
 class RelativeEntropyAnalyser:
   """
@@ -51,7 +52,6 @@ class RelativeEntropyAnalyser:
     self._load_entropy_logs()
 
 
-
   def _new_entropy_logs_if_needed(self):
     """
     ログファイルが存在しなければ生成
@@ -73,6 +73,7 @@ class RelativeEntropyAnalyser:
       str_entropy_list = log_file.readlines()
       self._absolute_entropy_logs = [float(s) for s in str_entropy_list] # To float list
 
+
   def calc_relative_entropy(self, img, absolute_entropy):
     """
     今の絶対エントロピーを受け取り，相対エントロピーを計算
@@ -91,6 +92,7 @@ class RelativeEntropyAnalyser:
     """
     # logのリストに引数のabsを追加
     self._absolute_entropy_logs.append(absolute_entropy)
+    self._append_abs_entropy_noise()
     self._update_entropy_logs()
 
     # リストをnarrayに変更
@@ -126,6 +128,30 @@ class RelativeEntropyAnalyser:
       log_file.writelines(str_entropy_list)
 
 
+  def _append_abs_entropy_noise(self):
+    # 要調節
+    NOISE_NUM = 10
+    DELTA_RATE = 0.01
+
+    noise_delta = None
+    latest_abs = None
+    logs_len = len(self._absolute_entropy_logs)
+
+    if logs_len in {None, 0}:
+      print('Error: Failed to append abs-entropy')
+      sys.exit()
+    else:
+      latest_abs = self._absolute_entropy_logs[logs_len]
+
+    if logs_len == 1:
+      noise_delta = latest_abs * DELTA_RATE
+    else:
+      prev_abs = self._absolute_entropy_logs[logs_len - 1]
+      noise_delta = latest_abs - prev_abs
+
+    for i in range(NOISE_NUM):
+      self._absolute_entropy_logs.append(latest_abs + (noise_delta * (i - (NOISE_NUM / 2.0))))
+
   # def close_log_file(self):
   #   """
   #   ログファイルのクローズ
@@ -142,7 +168,7 @@ class RelativeEntropyAnalyser:
 # print("Done!")
 
 
-# デバッグ２：_calc_entropy_analyser()
+# (済)デバッグ２：_calc_entropy_analyser()
 # # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
   def _debug_print(self):
     print("Updated a-entropies: ", self._absolute_entropy_logs)
