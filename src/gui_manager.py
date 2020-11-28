@@ -8,6 +8,7 @@
 変更内容：GuiManager.monitor()にwebカメラの画像を読み取る処理を追加する．
 変更内容：GuiManagerの画像サイズの初期化処理を修正．
 変更内容：GuiManagerに相対エントロピーを求める処理を追加．
+変更内容：GuiManagerに絶対エントロピーを求める処理を追加．
 
 
 """
