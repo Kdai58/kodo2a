@@ -113,10 +113,3 @@ class RelativeEntropyAnalyser:
   #   """
   #   # void
   #   pass
-
-# debug
-debug_img = [[1, 0], [0, 1]]
-debug_abs_entropy = 1.5
-relative_entropy_analyser = RelativeEntropyAnalyser()
-relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
-print("Done!")
