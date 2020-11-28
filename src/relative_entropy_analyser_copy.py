@@ -11,6 +11,7 @@
 
 """
 
+import numpy as np
 
 class RelativeEntropyAnalyser:
   """
@@ -89,6 +90,9 @@ class RelativeEntropyAnalyser:
     """
     # logのリストに引数のabsを追加
     self._absolute_entropy_logs.append(absolute_entropy)
+
+    # リストをnarrayに変更
+    abs_entropy_logs = np.array(self._absolute_entropy_logs)
 
     self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
