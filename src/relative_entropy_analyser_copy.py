@@ -91,6 +91,7 @@ class RelativeEntropyAnalyser:
     """
     # logのリストに引数のabsを追加
     self._absolute_entropy_logs.append(absolute_entropy)
+    self._update_entropy_logs()
 
     # リストをnarrayに変更
     abs_entropy_logs = np.array(self._absolute_entropy_logs)
@@ -109,8 +110,6 @@ class RelativeEntropyAnalyser:
       # データが1つ or 同じデータしかない場合
       self._relative_entropy = 3.0 / 2 # 正規化の中央の値
 
-    self._absolute_entropy_logs.append(self._relative_entropy)
-    self._update_entropy_logs()
     # self.close_log_file() # 不要（closeは各メソッドで行うようにしている）
 
     # 副作用：[0, 1.0): キレイ, [1.0, 2.0): 普通, [2.0, 3.0]: 汚い
