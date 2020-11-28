@@ -3,16 +3,19 @@
 """
 
 作成者：AL18036 片岡凪
-日付：2020.11.28 19:00
-バージョン：1.3 (1.2のときコメント忘れてました)
-変更内容：calc_relative_entropy()を実装
-変更内容：テストのmain処理を作成
-変更予定：最初のentropy(R)の振れ幅が大きいのを修正
+日付：2020.11.28 22:30～
+バージョン：1.4
+変更内容：精度のため、相対エントロピーのlogにノイズを追加 #58
+目的：データが少ないときに安定して判別してほしい
+目的：外れ値に強く反応してほしい（物が置かれて汚くなったり）
+変更予定：logが膨大になると重くなるので、あるsizeを超えたら古いlogから削除
+変更予定：同様な理由で、相対エントロピーがあまり変わらないときはそもそもlogを追加しない（POPする）
 
 """
 
 import numpy as np
 import random
+import sys
 
 class RelativeEntropyAnalyser:
   """
@@ -51,7 +54,6 @@ class RelativeEntropyAnalyser:
     self._load_entropy_logs()
 
 
-
   def _new_entropy_logs_if_needed(self):
     """
     ログファイルが存在しなければ生成
@@ -73,6 +75,7 @@ class RelativeEntropyAnalyser:
       str_entropy_list = log_file.readlines()
       self._absolute_entropy_logs = [float(s) for s in str_entropy_list] # To float list
 
+
   def calc_relative_entropy(self, img, absolute_entropy):
     """
     今の絶対エントロピーを受け取り，相対エントロピーを計算
@@ -91,6 +94,7 @@ class RelativeEntropyAnalyser:
     """
     # logのリストに引数のabsを追加
     self._absolute_entropy_logs.append(absolute_entropy)
+    self._append_abs_entropy_noise()
     self._update_entropy_logs()
 
     # リストをnarrayに変更
@@ -126,6 +130,31 @@ class RelativeEntropyAnalyser:
       log_file.writelines(str_entropy_list)
 
 
+  def _append_abs_entropy_noise(self):
+    # 要調節
+    NOISE_NUM = 10
+    DELTA_RATE = 0.01
+
+    noise_delta = None
+    latest_abs = None
+    logs_len = len(self._absolute_entropy_logs)
+
+    if logs_len in {None, 0}:
+      print('Error: Failed to append abs-entropy')
+      sys.exit()
+    else:
+      latest_abs = self._absolute_entropy_logs[logs_len - 1]
+
+    if logs_len == 1:
+      noise_delta = latest_abs * DELTA_RATE
+    else:
+      prev_abs = self._absolute_entropy_logs[logs_len - 2]
+      noise_delta = (latest_abs - prev_abs) * DELTA_RATE
+
+    for i in range(NOISE_NUM):
+      self._absolute_entropy_logs.append(latest_abs + (noise_delta * (i - (NOISE_NUM / 2.0))))
+
+
   # def close_log_file(self):
   #   """
   #   ログファイルのクローズ
@@ -142,21 +171,21 @@ class RelativeEntropyAnalyser:
 # print("Done!")
 
 
-# デバッグ２：_calc_entropy_analyser()
+# (済)デバッグ２：_calc_entropy_analyser()
 # # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
-  def _debug_print(self):
-    print("Updated a-entropies: ", self._absolute_entropy_logs)
-    print("Calced r-entropy: ", str(self._relative_entropy))
+#   def _debug_print(self, debug_abs_entropy):
+#     print("Updated a-entropies: ", self._absolute_entropy_logs)
+#     print("Added a-entropy: ", str(debug_abs_entropy))
+#     print("Calced r-entropy: ", str(self._relative_entropy))
 
 
-debug_img = [[1, 0], [0, 1]] # 動作に関係ない
-# debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
-debug_abs_entropy = random.randint(0, 100) # [0, 100]
-print("Added a-entropy: ", str(debug_abs_entropy))
+# debug_img = [[1, 0], [0, 1]] # 動作に関係ない
+# # debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
+# debug_abs_entropy = random.randint(0, 100) # [0, 100]
 
-# new
-relative_entropy_analyser = RelativeEntropyAnalyser()
-# calc
-relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
-# print
-relative_entropy_analyser._debug_print()
+# # new
+# relative_entropy_analyser = RelativeEntropyAnalyser()
+# # calc
+# relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
+# # print
+# relative_entropy_analyser._debug_print(debug_abs_entropy)
