@@ -94,17 +94,19 @@ class RelativeEntropyAnalyser:
     # リストをnarrayに変更
     abs_entropy_logs = np.array(self._absolute_entropy_logs)
 
-    # calc
+    # calc _relative_entropy (\in [0.0, 3.0])
     max_abs_entropy = abs_entropy_logs.max()
     min_abs_entropy = abs_entropy_logs.min()
+
     range = max_abs_entropy - min_abs_entropy
     relative_pos = absolute_entropy - min_abs_entropy
-    rtn_relative_entropy = relative_pos / range
-    rtn_relative_entropy *= 3.0 # [0,3]に正規化
+    
+    self._relative_entropy = relative_pos / range
+    self._relative_entropy *= 3.0 # [0,3]に正規化
 
     self._absolute_entropy_logs.append(self._relative_entropy)
     self._update_entropy_logs()
-    # self.close_log_file()
+    # self.close_log_file() # 不要（closeは各メソッドで行うようにしている）
 
     # 結合用の仮のfloatを返す
     # 副作用：[0, 1.0): キレイ, [1.0, 2.0): 普通, [2.0, 3.0]: 汚い
