@@ -5,13 +5,14 @@
 作成者：AL18036 片岡凪
 日付：2020.11.28 19:00
 バージョン：1.3 (1.2のときコメント忘れてました)
-変更内容：_calc_relative_entropy()を実装
+変更内容：calc_relative_entropy()を実装
 変更内容：テストのmain処理を作成
 変更予定：結合テストが上手くいかなければ調節
 
 """
 
 import numpy as np
+import random
 
 class RelativeEntropyAnalyser:
   """
@@ -132,3 +133,31 @@ class RelativeEntropyAnalyser:
   #   """
   #   # void
   #   pass
+
+# # (済)デバッグ１：ファイル関係
+# # logを消して3回実行できればよい
+# debug_img = [[1, 0], [0, 1]]
+# debug_abs_entropy = 1.5
+# relative_entropy_analyser = RelativeEntropyAnalyser()
+# relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
+# print("Done!")
+
+
+# デバッグ２：_calc_entropy_analyser()
+# # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
+  def _debug_print(self):
+    print("Updated a-entropies: ", self._absolute_entropy_logs)
+    print("Calced r-entropy: ", str(self._relative_entropy))
+
+
+debug_img = [[1, 0], [0, 1]] # 動作に関係ない
+# debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
+debug_abs_entropy = random.randint(0, 100) # [0, 100]
+print("Added a-entropy: ", str(debug_abs_entropy))
+
+# new
+relative_entropy_analyser = RelativeEntropyAnalyser()
+# calc
+relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
+# print
+relative_entropy_analyser._debug_print()
