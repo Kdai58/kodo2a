@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 Pipfile
 Pipfile.lock
+previous_entropies.log
