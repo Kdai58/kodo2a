@@ -3,10 +3,11 @@
 """
 
 作成者：兼平大輔
-日付：2020.11.23
-バージョン：9.0
+日付：2020.11.28
+バージョン：10.0
 変更内容：GuiManager.monitor()にwebカメラの画像を読み取る処理を追加する．
-変更内容：GuiManagerの画像サイズの初期化処理を修正
+変更内容：GuiManagerの画像サイズの初期化処理を修正．
+変更内容：GuiManagerに相対エントロピーを求める処理を追加．
 
 
 """
@@ -19,7 +20,7 @@ import random
 import time
 from PIL import Image, ImageTk
 from camera_img_extractor import CameraImgExtractor
-#from relative_entropy_analyser import RelativeEntropyAnalyser
+from relative_entropy_analyser import RelativeEntropyAnalyser
 
 class GuiManager(tkinter.Frame):
 	def __init__(self, master=None, sleep_sec=5):
@@ -88,26 +89,22 @@ class GuiManager(tkinter.Frame):
 		"""
 
 		i = 0
-		# relative_entropy_analyser = RelativeEntropyAnalyser()
+		relative_entropy_analyser = RelativeEntropyAnalyser()
 
 		# ここに部屋の監視の処理を書く．
 		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
 		while (1):
 			time.sleep(self._SLEEP_SEC)
 
-			absolute_entropy = i % 3
-			# relative_entropy = relative_entropy_analyser.calc_relative_entropy(self._img_array, absolute_entropy)
-			relative_entropy = i % 3
+			absolute_entropy = random.randint(0, 100)
+			relative_entropy = relative_entropy_analyser.calc_relative_entropy(self._img_array, absolute_entropy)
 			self._img_array = self.camera_img_extractor.read_img()
 			entropy_level = self._to_entropy_level(relative_entropy)
 
-			self.update_gui(entropy_level=entropy_level, 
-				absolute_entropy=absolute_entropy, 
-				relative_entropy=relative_entropy, 
+			self.update_gui(entropy_level=entropy_level,
+				absolute_entropy=absolute_entropy,
+				relative_entropy=relative_entropy,
 				img_array=self._img_array)
-			print(self._img_array)
-			print(i)
-			i += 1
 
 	def update_gui(self, entropy_level, absolute_entropy, relative_entropy, img_array):
 		"""
