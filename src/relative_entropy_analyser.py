@@ -3,13 +3,16 @@
 """
 
 作成者：AL18036 片岡凪
-日付：2020.11.23
-バージョン：1.1
-変更内容：属性の初期化をコンストラクタ内で行うように変更
-変更内容：リストを{}と勘違いしていたのを[]に変更
-変更予定：メソッドの実装
+日付：2020.11.28 19:00
+バージョン：1.3 (1.2のときコメント忘れてました)
+変更内容：calc_relative_entropy()を実装
+変更内容：テストのmain処理を作成
+変更予定：最初のentropy(R)の振れ幅が大きいのを修正
 
 """
+
+import numpy as np
+import random
 
 class RelativeEntropyAnalyser:
   """
@@ -86,20 +89,36 @@ class RelativeEntropyAnalyser:
     float
       計算した相対エントロピー
     """
-    #TODO: calc
-
-    self._absolute_entropy_logs.append(self._relative_entropy)
+    # logのリストに引数のabsを追加
+    self._absolute_entropy_logs.append(absolute_entropy)
     self._update_entropy_logs()
-    # self.close_log_file()
 
-    # 結合用の仮のfloatを返す
+    # リストをnarrayに変更
+    abs_entropy_logs = np.array(self._absolute_entropy_logs)
+
+    # _relative_entropy を計算 (\in [0.0, 3.0])
+    max_abs_entropy = abs_entropy_logs.max()
+    min_abs_entropy = abs_entropy_logs.min()
+
+    range = max_abs_entropy - min_abs_entropy
+    relative_pos = absolute_entropy - min_abs_entropy
+    
+    if (range != 0): # 0除算の例外処理
+      self._relative_entropy = float(relative_pos) / range
+      self._relative_entropy *= 3.0  # [0,3]に正規化
+    else:
+      # データが1つ or 同じデータしかない場合
+      self._relative_entropy = 3.0 / 2 # 正規化の中央の値
+
+    # self.close_log_file() # 不要（closeは各メソッドで行うようにしている）
+
     # 副作用：[0, 1.0): キレイ, [1.0, 2.0): 普通, [2.0, 3.0]: 汚い
-    return self._relative_entropy # 仮値 1.5
+    return self._relative_entropy
 
 
   def _update_entropy_logs(self):
     """
-    受け取った絶対エントロピーをログファイルに上書き
+    絶対エントロピーをログファイルに上書き
     速度が落ちるようであれば追記にするとよい
     """
     with open(self._LOG_FILE_PATH, mode='w') as log_file:
@@ -113,3 +132,31 @@ class RelativeEntropyAnalyser:
   #   """
   #   # void
   #   pass
+
+# # (済)デバッグ１：ファイル関係
+# # logを消して3回実行できればよい
+# debug_img = [[1, 0], [0, 1]]
+# debug_abs_entropy = 1.5
+# relative_entropy_analyser = RelativeEntropyAnalyser()
+# relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
+# print("Done!")
+
+
+# デバッグ２：_calc_entropy_analyser()
+# # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
+  def _debug_print(self):
+    print("Updated a-entropies: ", self._absolute_entropy_logs)
+    print("Calced r-entropy: ", str(self._relative_entropy))
+
+
+debug_img = [[1, 0], [0, 1]] # 動作に関係ない
+# debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
+debug_abs_entropy = random.randint(0, 100) # [0, 100]
+print("Added a-entropy: ", str(debug_abs_entropy))
+
+# new
+relative_entropy_analyser = RelativeEntropyAnalyser()
+# calc
+relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
+# print
+relative_entropy_analyser._debug_print()
