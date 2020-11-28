@@ -108,9 +108,8 @@ class RelativeEntropyAnalyser:
     self._update_entropy_logs()
     # self.close_log_file() # 不要（closeは各メソッドで行うようにしている）
 
-    # 結合用の仮のfloatを返す
     # 副作用：[0, 1.0): キレイ, [1.0, 2.0): 普通, [2.0, 3.0]: 汚い
-    return self._relative_entropy # 仮値 1.5
+    return self._relative_entropy
 
 
   def _update_entropy_logs(self):
