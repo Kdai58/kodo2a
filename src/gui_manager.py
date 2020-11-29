@@ -93,6 +93,8 @@ class GuiManager(tkinter.Frame):
 		absolute_entropy_analyser = AbsoluteEntropyAnalyser()
 		relative_entropy_analyser = RelativeEntropyAnalyser()
 
+		i = 0
+
 		# ここに部屋の監視の処理を書く．
 		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
 		while (1):
@@ -107,6 +109,9 @@ class GuiManager(tkinter.Frame):
 				absolute_entropy=absolute_entropy,
 				relative_entropy=relative_entropy,
 				img_array=self._img_array)
+
+			print(f"{i}:Updated")
+			i += 1
 
 	def update_gui(self, entropy_level, absolute_entropy, relative_entropy, img_array):
 		"""
