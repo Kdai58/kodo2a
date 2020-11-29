@@ -4,12 +4,13 @@
 
 作成者：兼平大輔
 日付：2020.11.30
-バージョン：11.0
+バージョン：12.0
 変更内容：GuiManager.monitor()にwebカメラの画像を読み取る処理を追加する．
 変更内容：GuiManagerの画像サイズの初期化処理を修正．
 変更内容：GuiManagerに相対エントロピーを求める処理を追加．
 変更内容：GuiManagerに絶対エントロピーを求める処理を追加．
 変更内容：GuiManagerにwebカメラ接続エラー時の例外処理を追加．
+変更内容：GuiManager.monitor()のwebカメラの存在を確認するif文を修正．
 
 
 """
@@ -111,13 +112,12 @@ class GuiManager(tkinter.Frame):
 
 		i = 0
 
-		# ここに部屋の監視の処理を書く．
-		# 今はとりあえず３秒毎に，アラートメッセージの更新と画像の切り替えを行なっている．
+		# self._SLEEP_SEC毎に，webカメラから画像を読み取り，絶対エントロピー，相対エントロピー，乱雑度を求めてGUIを更新する．
 		while (1):
 			time.sleep(self._SLEEP_SEC)
 
 			tmp_img_array = self.camera_img_extractor.read_img()
-			if (type(tmp_img_array) != None):
+			if (self.camera_img_extractor.is_exist_webcam): # webカメラが存在するなら画像を読み取って，絶対エントロピー，相対エントロピー，乱雑度を求めてGUIを更新．
 				self._img_array = tmp_img_array
 				self._absolute_entropy = absolute_entropy_analyser.calc_absolute_entropy(self._img_array)
 				self._relative_entropy = relative_entropy_analyser.calc_relative_entropy(self._img_array, self._absolute_entropy)
@@ -127,7 +127,7 @@ class GuiManager(tkinter.Frame):
 				                relative_entropy=self._relative_entropy,
 				                img_array=self._img_array,
 				                alert_message="")
-			else:
+			else: # webカメラが存在しないなら，webカメラ接続エラーのアラートメッセージのみを更新する．
 				self.update_gui(entropy_level=self._entropy_level,
 					            absolute_entropy=self._absolute_entropy,
 					            relative_entropy=self._relative_entropy,
