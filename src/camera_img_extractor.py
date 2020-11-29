@@ -4,10 +4,11 @@
 
 作成者：金森三尭，兼平大輔
 日付：2020.11.29
-バージョン：4.0
+バージョン：5.0
 変更内容：open_wecamの編集→兼平君に手伝ってもらって完成したみたいです。金森の環境では映らなかったので確認お願いします。
 変更内容：read_img()に，webカメラから読み取った画像をリサイズする処理を追加．縮小率はとりあえず2にしている．
 変更内容：webカメラの有無によって出力を変える
+変更内容：read_img()の例外処理を修正．
 
 """
 
@@ -41,6 +42,7 @@ class CameraImgExtractor:
         return self.is_exist_webcam
 
     def read_img(self):
+        # 常にis_exist_webcam == Trueになってしまうので，とりあえずコメントアウト．
         # try:
         #     ret, frame = self.cap.read()
         #     self.is_exist_webcam = True
@@ -53,7 +55,7 @@ class CameraImgExtractor:
 
         if (ret != True):
             self.is_exist_webcam = False
-            return np.zeros((100, 100))
+            return frame
 
         frame = cv2.resize(frame, (frame.shape[1] // self._REDUCTION_RATIO, frame.shape[0] // self._REDUCTION_RATIO))
         return frame
@@ -62,20 +64,23 @@ class CameraImgExtractor:
         self.cap.release()
         cv2.destroyAllWindows()
 
-if __name__ == "__main__":
-    camera_img_extractor = CameraImgExtractor()
-    print(f"open webcam stream:{camera_img_extractor.is_exist_webcam}")
+# デバッグ文
+# if __name__ == "__main__":
+#     camera_img_extractor = CameraImgExtractor()
+#     print(f"open webcam stream:{camera_img_extractor.is_exist_webcam}")
 
-    i = 0
-    while 1:
-        frame = camera_img_extractor.read_img()
-        print(f"{i}:read image:{camera_img_extractor.is_exist_webcam}")
-        cv2.imshow('sample', frame)
+#     i = 0
+#     while 1:
+#         frame = camera_img_extractor.read_img()
+#         print(f"{i}:read image:{camera_img_extractor.is_exist_webcam}")
 
-        k = cv2.waitKey(1)
-        if k == 27:
-            break
+#         if (type(frame) != None):
+#             cv2.imshow('sample', frame)
 
-        i += 1
-        time.sleep(3)
-    camera_img_extractor.release_webcam_stream()
+#         k = cv2.waitKey(1)
+#         if k == 27:
+#             break
+
+#         i += 1
+#         time.sleep(3)
+#     camera_img_extractor.release_webcam_stream()
