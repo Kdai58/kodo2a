@@ -16,6 +16,7 @@
 import numpy as np
 import random
 import sys
+import os
 
 class RelativeEntropyAnalyser:
   """
@@ -49,9 +50,51 @@ class RelativeEntropyAnalyser:
     self._absolute_entropy_logs = None
     # = [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5  # 結合用の仮のfloat
-    self._LOG_FILE_PATH = '../dest/previous_entropies.log'  #.logファイルに変更 名前がわかりやすいだけ
+    self._DEST_RELATIVE_PATH = "../dest"
+    self._LOG_FILE_NAME = "previous_entropies.log"
+    self._new_dest_folder_if_needed()
     self._new_entropy_logs_if_needed()
     self._load_entropy_logs()
+
+
+  def _rtn_dest_folder_relative_path(self):
+    """
+    destフォルダのパスを返す
+    @see https://qiita.com/FGtatsuro/items/52ad08640df6bfad5c2a
+
+    Returns
+    -------
+    string
+      destフォルダのパス
+    """
+    this_src_abs_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.normpath(os.path.join(this_src_abs_path, self._DEST_RELATIVE_PATH))
+
+
+  def _rtn_log_file_relative_path(self):
+    """
+    logファイルのパスを返す
+    @see https://qiita.com/FGtatsuro/items/52ad08640df6bfad5c2a
+
+    Returns
+    -------
+    string
+      logファイルのパス
+    """
+    dest_path = self._rtn_dest_folder_relative_path()
+    return os.path.normpath(os.path.join(dest_path, self._LOG_FILE_NAME))
+
+
+  def _new_dest_folder_if_needed(self):
+    """
+    destフォルダが存在しなければ生成
+    @see https://qiita.com/FGtatsuro/items/52ad08640df6bfad5c2a
+    @see https://khid.net/2019/12/python-check-exists-dir-make-dir/
+    """
+    dest_path = self._rtn_dest_folder_relative_path()
+    if not os.path.exists(dest_path):
+      print("Made dest folder")
+      os.makedirs(dest_path)
 
 
   def _new_entropy_logs_if_needed(self):
@@ -59,9 +102,10 @@ class RelativeEntropyAnalyser:
     ログファイルが存在しなければ生成
     @see https://note.nkmk.me/python-file-io-open-with/
     """
+    log_path = self._rtn_log_file_relative_path()
     try:
       # mode x: 存在'する'場合にエラー
-      with open(self._LOG_FILE_PATH, mode='x') as log_file:
+      with open(log_path, mode='x') as log_file:
         log_file.write('')
     except FileExistsError:
       pass
@@ -71,7 +115,8 @@ class RelativeEntropyAnalyser:
     """
     相対エントロピーをログファイルからロード
     """
-    with open(self._LOG_FILE_PATH, mode='r') as log_file:
+    log_path = self._rtn_log_file_relative_path()
+    with open(log_path, mode='r') as log_file:
       str_entropy_list = log_file.readlines()
       self._absolute_entropy_logs = [float(s) for s in str_entropy_list] # To float list
 
@@ -125,7 +170,8 @@ class RelativeEntropyAnalyser:
     絶対エントロピーをログファイルに上書き
     速度が落ちるようであれば追記にするとよい
     """
-    with open(self._LOG_FILE_PATH, mode='w') as log_file:
+    log_path = self._rtn_log_file_relative_path()
+    with open(log_path, mode='w') as log_file:
       str_entropy_list = [str(float_entropy) + '\n' for float_entropy in self._absolute_entropy_logs] # To string list
       log_file.writelines(str_entropy_list)
 
@@ -172,20 +218,20 @@ class RelativeEntropyAnalyser:
 
 
 # (済)デバッグ２：_calc_entropy_analyser()
-# # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
-#   def _debug_print(self, debug_abs_entropy):
-#     print("Updated a-entropies: ", self._absolute_entropy_logs)
-#     print("Added a-entropy: ", str(debug_abs_entropy))
-#     print("Calced r-entropy: ", str(self._relative_entropy))
+# logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
+  def _debug_print(self, debug_abs_entropy):
+    print("Updated a-entropies: ", self._absolute_entropy_logs)
+    print("Added a-entropy: ", str(debug_abs_entropy))
+    print("Calced r-entropy: ", str(self._relative_entropy))
 
 
-# debug_img = [[1, 0], [0, 1]] # 動作に関係ない
-# # debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
-# debug_abs_entropy = random.randint(0, 100) # [0, 100]
+debug_img = [[1, 0], [0, 1]] # 動作に関係ない
+# debug_abs_entropy = random.uniform(0, 100)  # [0.0, 100.0]
+debug_abs_entropy = random.randint(0, 100) # [0, 100]
 
-# # new
-# relative_entropy_analyser = RelativeEntropyAnalyser()
-# # calc
-# relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
-# # print
-# relative_entropy_analyser._debug_print(debug_abs_entropy)
+# new
+relative_entropy_analyser = RelativeEntropyAnalyser()
+# calc
+relative_entropy_analyser.calc_relative_entropy(debug_img, debug_abs_entropy)
+# print
+relative_entropy_analyser._debug_print(debug_abs_entropy)
