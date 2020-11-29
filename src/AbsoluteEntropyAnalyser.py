@@ -1,10 +1,13 @@
 """
 
 作成者 寺尾佳祐
-作成日 11/25
-ver4.0
+作成日 11/29
+ver5.0
 変更内容 :  関数名を変更．
            関数の機能を「エッジ検出した画像を出力」から「絶対エントロピーを返す」に変更．
+変更内容：18行目のself.imgにimgを格納する行を削除．
+         21行目のcv2.imread()している行を削除．
+         calc_absolute_entropy()がエッジ画像の平均画素値をそのまま返すように修正．
 
 """
 #与えられた画像からエッジを検出．乱雑度を仮に数値化
@@ -15,10 +18,7 @@ import random
 
 class AbsoluteEntropyAnalyser:
     def calc_absolute_entropy(self, img):
-        self.img = img; #img変数に引数を格納
-
         #画像読み込み，白黒画像に変換 (輝度)
-        img = cv2.imread(img)
         img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
         #エッジを検出
@@ -36,18 +36,7 @@ class AbsoluteEntropyAnalyser:
                 mean_value += edges[y,x]
 
         mean_value = mean_value / (height * width)
-
-        #画素値から3値に正規化．値が小さいほど綺麗な部屋
-        absolute_entropy = 0
-
-        if   mean_value > 20:
-            absolute_entropy = 2
-        elif 10 < mean_value <= 20:
-            absolute_entropy = 1
-        elif mean_value <= 10:
-            absolute_entropy = 0
-
-        return absolute_entropy
+        return mean_value
      
 
 
