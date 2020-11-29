@@ -3,11 +3,9 @@
 """
 
 作成者：AL18036 片岡凪
-日付：2020.11.28 22:30～
-バージョン：1.4
-変更内容：精度のため、相対エントロピーのlogにノイズを追加 #58
-目的：データが少ないときに安定して判別してほしい
-目的：外れ値に強く反応してほしい（物が置かれて汚くなったり）
+日付：2020.11.29 24：00
+バージョン：1.5
+変更内容：destフォルダやlogファイルがなければ生成
 変更予定：logが膨大になると重くなるので、あるsizeを超えたら古いlogから削除
 変更予定：同様な理由で、相対エントロピーがあまり変わらないときはそもそもlogを追加しない（POPする）
 
@@ -16,6 +14,7 @@
 import numpy as np
 import random
 import sys
+import os
 
 class RelativeEntropyAnalyser:
   """
@@ -30,6 +29,12 @@ class RelativeEntropyAnalyser:
 
   Methods
   -------
+  _rtn_dest_folder_relative_path(): string
+    destフォルダのパスを返す
+  _rtn_log_file_relative_path(): string
+    logファイルのパスを返す
+  _new_dest_folder_if_needed(): void
+    destフォルダが存在しなければ生成
   _new_entropy_logs_if_needed(): void
     ログファイルが存在しなければ生成
   _load_entropy_logs(): void
@@ -40,6 +45,8 @@ class RelativeEntropyAnalyser:
     受け取った絶対エントロピーをログファイルに記録
   close_log_file(): void
     ログファイルのクローズ
+  _append_abs_entropy_noise: void
+    精度のため、logの記録時に付近のabs-entropyをノイズとして記録
   """
 
   def __init__(self):
@@ -49,9 +56,51 @@ class RelativeEntropyAnalyser:
     self._absolute_entropy_logs = None
     # = [0.0, 0.1, 0.9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.9, 3.0]  # イメージするための仮のfloat[], 旧 previous_entropies
     self._relative_entropy = 1.5  # 結合用の仮のfloat
-    self._LOG_FILE_PATH = '../dest/previous_entropies.log'  #.logファイルに変更 名前がわかりやすいだけ
+    self._DEST_RELATIVE_PATH = "../dest"
+    self._LOG_FILE_NAME = "previous_entropies.log"
+    self._new_dest_folder_if_needed()
     self._new_entropy_logs_if_needed()
     self._load_entropy_logs()
+
+
+  def _rtn_dest_folder_relative_path(self):
+    """
+    destフォルダのパスを返す
+    @see https://qiita.com/FGtatsuro/items/52ad08640df6bfad5c2a
+
+    Returns
+    -------
+    string
+      destフォルダのパス
+    """
+    this_src_abs_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.normpath(os.path.join(this_src_abs_path, self._DEST_RELATIVE_PATH))
+
+
+  def _rtn_log_file_relative_path(self):
+    """
+    logファイルのパスを返す
+    @see https://qiita.com/FGtatsuro/items/52ad08640df6bfad5c2a
+
+    Returns
+    -------
+    string
+      logファイルのパス
+    """
+    dest_path = self._rtn_dest_folder_relative_path()
+    return os.path.normpath(os.path.join(dest_path, self._LOG_FILE_NAME))
+
+
+  def _new_dest_folder_if_needed(self):
+    """
+    destフォルダが存在しなければ生成
+    @see https://qiita.com/FGtatsuro/items/52ad08640df6bfad5c2a
+    @see https://khid.net/2019/12/python-check-exists-dir-make-dir/
+    """
+    dest_path = self._rtn_dest_folder_relative_path()
+    if not os.path.exists(dest_path):
+      print("Made dest folder")
+      os.makedirs(dest_path)
 
 
   def _new_entropy_logs_if_needed(self):
@@ -59,9 +108,10 @@ class RelativeEntropyAnalyser:
     ログファイルが存在しなければ生成
     @see https://note.nkmk.me/python-file-io-open-with/
     """
+    log_path = self._rtn_log_file_relative_path()
     try:
       # mode x: 存在'する'場合にエラー
-      with open(self._LOG_FILE_PATH, mode='x') as log_file:
+      with open(log_path, mode='x') as log_file:
         log_file.write('')
     except FileExistsError:
       pass
@@ -71,7 +121,8 @@ class RelativeEntropyAnalyser:
     """
     相対エントロピーをログファイルからロード
     """
-    with open(self._LOG_FILE_PATH, mode='r') as log_file:
+    log_path = self._rtn_log_file_relative_path()
+    with open(log_path, mode='r') as log_file:
       str_entropy_list = log_file.readlines()
       self._absolute_entropy_logs = [float(s) for s in str_entropy_list] # To float list
 
@@ -125,12 +176,16 @@ class RelativeEntropyAnalyser:
     絶対エントロピーをログファイルに上書き
     速度が落ちるようであれば追記にするとよい
     """
-    with open(self._LOG_FILE_PATH, mode='w') as log_file:
+    log_path = self._rtn_log_file_relative_path()
+    with open(log_path, mode='w') as log_file:
       str_entropy_list = [str(float_entropy) + '\n' for float_entropy in self._absolute_entropy_logs] # To string list
       log_file.writelines(str_entropy_list)
 
 
   def _append_abs_entropy_noise(self):
+    """
+    精度のため、logの記録時に付近のabs-entropyをノイズとして記録
+    """
     # 要調節
     NOISE_NUM = 10
     DELTA_RATE = 0.01
@@ -171,7 +226,7 @@ class RelativeEntropyAnalyser:
 # print("Done!")
 
 
-# (済)デバッグ２：_calc_entropy_analyser()
+# # (済)デバッグ２：_calc_entropy_analyser()
 # # logを消して3回実行し、0.0-3.0の数値が標準出力されればよい
 #   def _debug_print(self, debug_abs_entropy):
 #     print("Updated a-entropies: ", self._absolute_entropy_logs)
