@@ -11,13 +11,13 @@
     \centering
     \begin{tabular}{|c|p{11em}|p{11em}|p{7em}|p{6em}|c|p{5em}|} \hline
         No & テスト項目 & 入力 & 出力期待値 & 出力結果 & 合否 & 理由と対応 \\ \hline
-        1 & Room Entropy Checkerを起動 & room\_entropy\_checker.pyを実行 & GUIにwebカメラの画像が表示される &  &  & \\ \hline
-        2 & 部屋の監視を開始 & startボタンを押す & アラートメッセージとエントロピーが更新される &  &  & \\ \hline
-        3 & ”綺麗”の部屋に対する判定を確認 & 部屋を”綺麗”の状態にする & GUIに”How beautiful your room is!!”と表示される &  &  & \\ \hline
-        4 & ”普通”の部屋に対する判定を確認 & 部屋を”普通”の状態にする & GUIに”Endeavor putting your room in order”と表示される &  &  & \\ \hline
-        5 & ”汚い”の部屋に対する判定を確認 & 部屋を”汚い”の状態にする & GUIに”How dirty your room is...”と表示される &  &  & \\ \hline
-        6 & Room Entropy Checkerを終了 & stopボタンを押す & GUIが消えた後，プログラムが終了する &  &  & \\ \hline
-        7 & 2の後，webカメラの接続を切る & webカメラの接続を切る & GUIに”エラー：ウェブカメラが見つかりません”が表示される &  &  & \\ \hline
+        1 & Room Entropy Checkerを起動 & room\_entropy\_checker.pyを実行 & GUIにwebカメラの画像が表示される & 表示された & True & \\ \hline
+        2 & 部屋の監視を開始 & startボタンを押す & アラートメッセージとエントロピーが更新される & 表示はされた & False & Startを複数回押すと、その回数だけUpdateが都度発生\\ \hline
+        3 & ”綺麗”の部屋に対する判定を確認 & 部屋を”綺麗”の状態にする & GUIに”How beautiful your room is!!”と表示される & 表示はされる & False & 汚い状態から綺麗にすると、普通を通り越して綺麗が表示される \\ \hline
+        4 & ”普通”の部屋に対する判定を確認 & 部屋を”普通”の状態にする & GUIに”Endeavor putting your room in order”と表示される & 表示はされる & False & 汚い、綺麗、普通の順に部屋を調節しても、綺麗を表示 \\ \hline
+        5 & ”汚い”の部屋に対する判定を確認 & 部屋を”汚い”の状態にする & GUIに”How dirty your room is...”と表示される & 表示はされる & False & 部屋の状態とabsが対応していない。24～32の値をとった。 \\ \hline
+        6 & Room Entropy Checkerを終了 & stopボタンを押す & GUIが消えた後，プログラムが終了する & 表示はされる & True & \\ \hline
+        7 & 2の後，webカメラの接続を切る & webカメラの接続を切る & GUIに”エラー：ウェブカメラが見つかりません”が表示される & - & - & \\ \hline
     \end{tabular}
     \label{tab:test_set1}
 \end{table}
