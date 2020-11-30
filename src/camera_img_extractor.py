@@ -57,8 +57,9 @@ class CameraImgExtractor:
             self.is_exist_webcam = False
             return frame
 
-        frame = cv2.resize(frame, (frame.shape[1] // self._REDUCTION_RATIO, frame.shape[0] // self._REDUCTION_RATIO))
-        return frame
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_rgb = cv2.resize(frame_rgb, (frame_rgb.shape[1] // self._REDUCTION_RATIO, frame_rgb.shape[0] // self._REDUCTION_RATIO))
+        return frame_rgb
 
     def release_webcam_stream(self):
         self.cap.release()
